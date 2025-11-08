@@ -1,0 +1,8 @@
+# Ignore /_Secure directory situated anywhere, when push is done via git
+**/_Secure/
+# Ignore /_UnityThruTheAges directory situated anywhere, when push is done via git
+**/_UnityThruTheAges/
+# Ignore /SampleFPS directory situated anywhere, when push is done via git
+**/SampleFPS/
+# Ignore /SampleFPS directory situated anywhere, when push is done via git
+**/URP/
