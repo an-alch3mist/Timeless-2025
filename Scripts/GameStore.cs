@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,10 +23,10 @@ namespace SPACE_GAME
 		{
 			Debug.Log(C.method(this, "white"));
 			GameStore.IA = this._IA;
-			GameStore.LoadAll();
+			GameStore.LoadAllSavedGameDataJsonToField();
 		}
 
-		static void LoadAll()
+		static void LoadAllSavedGameDataJsonToField()
 		{
 			GameStore.IA.LoadBindingOverridesFromJson(LOG.LoadGameData(GameDataType.inputActionAsset));
 			GameStore.playerStats = LOG.LoadGameData<PlayerStats>(GameDataType.playerStats);
@@ -57,6 +58,12 @@ namespace SPACE_GAME
 	{
 		doorOpen,
 		doorClose
+	}
+
+	public enum ResourceType
+	{
+		audio__doorLocked,
+		audio__doorOpen,
 	}
 	// ========== GLOBAL ENUM ============= //
 }
