@@ -1378,7 +1378,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 17b57146f386e8f499fb33850ee3222e, type: 2}
+  - {fileID: 2100000, guid: a98a6afbd133e51468a525ca378694d4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6312,7 +6312,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154705338}
-  m_LocalRotation: {x: -0, y: 0.754084, z: -0, w: 0.6567779}
+  m_LocalRotation: {x: -0, y: 0.2609922, z: -0, w: 0.965341}
   m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6320,7 +6320,7 @@ Transform:
   - {fileID: 1715263378}
   m_Father: {fileID: 2070244432}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 97.891, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 30.258, z: 0}
 --- !u!1001 &1162704242
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6785,7 +6785,7 @@ Camera:
     height: 1
   near clip plane: 0.2
   far clip plane: 500
-  field of view: 40
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -7508,7 +7508,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c4fa7a838b22ca40bc5509fd2415053, type: 2}
+  - {fileID: 2100000, guid: 3217cd5f57217c5449851ad97b8e3f4a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10505,7 +10505,7 @@ GameObject:
   - component: {fileID: 1715263376}
   - component: {fileID: 1715263375}
   m_Layer: 0
-  m_Name: door block
+  m_Name: frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10582,7 +10582,7 @@ Transform:
   m_GameObject: {fileID: 1715263374}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.5, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 0.05}
+  m_LocalScale: {x: 1, y: 2.02, z: 0.05}
   m_Children: []
   m_Father: {fileID: 1154705339}
   m_RootOrder: 1
@@ -11986,7 +11986,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7c4fa7a838b22ca40bc5509fd2415053, type: 2}
+  - {fileID: 2100000, guid: 3217cd5f57217c5449851ad97b8e3f4a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12751,6 +12751,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3778356310998312658, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: m_Lens.FieldOfView
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: TopClamp
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: MoveSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: JumpHeight
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: BottomClamp
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: SprintSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: RotationSpeed
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206944368697534319, guid: c490c1cfd76483d4f86b517248e02cf9,
+        type: 3}
+      propertyPath: SpeedChangeRate
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5617835629242355744, guid: c490c1cfd76483d4f86b517248e02cf9,
         type: 3}
       propertyPath: m_Name

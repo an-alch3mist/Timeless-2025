@@ -8,15 +8,32 @@ namespace SPACE_GAME
 {
 	public class Door : MonoBehaviour
 	{
+		[SerializeField] bool locked = false;
 		bool isDoorOpen = false;
 		public bool toggle()
 		{
-			this.isDoorOpen = !this.isDoorOpen;
 			Animator animator = this.GetComponent<Animator>();
 
-			if(this.isDoorOpen == true) animator.TrySetTrigger(AnimParamType.doorOpen);
-			if(this.isDoorOpen == false) animator.TrySetTrigger(AnimParamType.doorClose);
-			return this.isDoorOpen;
+			if (this.isDoorOpen == true)
+			{
+				if (this.locked)
+				{
+					animator.TrySetTrigger(AnimParamType.doorLocked);
+					return this.isDoorOpen;
+				}
+				else
+				{
+					animator.TrySetTrigger(AnimParamType.doorOpen);
+					this.isDoorOpen = !this.isDoorOpen;
+					return this.isDoorOpen;
+				}
+			}
+			else
+			{
+				animator.TrySetTrigger(AnimParamType.doorClose);
+				this.isDoorOpen = !this.isDoorOpen;
+				return this.isDoorOpen;
+			}
 		}
 
 		public void LogCurrAnimState()

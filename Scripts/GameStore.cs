@@ -25,7 +25,6 @@ namespace SPACE_GAME
 			GameStore.IA = this._IA;
 			GameStore.LoadAllSavedGameDataJsonToField();
 		}
-
 		static void LoadAllSavedGameDataJsonToField()
 		{
 			GameStore.IA.LoadBindingOverridesFromJson(LOG.LoadGameData(GameDataType.inputActionAsset));
@@ -52,18 +51,24 @@ namespace SPACE_GAME
 	{
 		inputActionAsset,
 		playerStats,
+		doorStates, // Added for door system save/load
 	}
 
 	public enum AnimParamType
 	{
-		doorOpen,
-		doorClose
+		doorOpen,      // Trigger
+		doorClose,     // Trigger
+		doorLocked,    // Trigger (jiggle animation)
+		doorSwaying,   // Bool (looping sway animation)
 	}
 
 	public enum ResourceType
 	{
 		audio__doorLocked,
 		audio__doorOpen,
+		audio__doorClose,
+		audio__doorUnlock,
+		audio__doorCreak,
 	}
 	// ========== GLOBAL ENUM ============= //
 }

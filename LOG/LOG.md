@@ -1003,3 +1003,200 @@ Layers (1):
 
 ```
 
+```sceneGameObject-hierarchy
+=== Component Abbreviations ===
+dmc = MeshFilter | MeshRenderer
+bc = BoxCollider
+anim = Animator
+================================
+
+./turnYDoor/(scale:1.0 | anim, Door)
+├ door (scale:1.0 | no components)
+├ door origin (scale:1.0 | no components)
+│ ├ handle (scale:(0.1,0.2,0.1) | dmc, bc)
+│ └ door block (scale:(1.0,2.0,0.1) | dmc, bc)
+├ hinge block (scale:(0.1,2.0,0.1) | dmc, bc)
+└ hinge (scale:(0.1,2.0,0.1) | dmc, bc)
+
+```
+
+```projectFolder-hierarchy
+./AnimController/
+├ doorOpenCloseAnimController_AnyStateExitApproach.controller (AnimatorController)
+└ doorOpenCloseAnimController_stateMachineApproach.controller (AnimatorController)
+
+```
+
+```projectFolder-hierarchy
+=== Component Abbreviations ===
+cr = CanvasRenderer
+sr = ScrollRect
+btnO = Button | Image | Outline
+img = Image
+autoFitH = HorizontalLayoutGroup | ContentSizeFitter
+================================
+
+=== Asset Type Abbreviations ===
+mat = Material
+pf = Prefab
+tex = Texture
+cs = Script
+scene = Scene
+txt = TextAsset
+================================
+
+./_/
+├ =0.3.ver (DefaultAsset)
+├ @PROMPT/
+│ ├ C# to README --enhanced prompt_new v0.5.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8.1 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8.2 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8.3 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8.4 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v0.8.5 --min.md (txt)
+│ ├ C# to README --enhanced prompt_new v10 --min.md (txt)
+│ ├ C# to README from scratch.md (txt)
+│ └ ComplexSample/
+│   ├ ComplexSample v0.1.cs.min.md (txt)
+│   ├ ComplexSample.cs (cs | unknown)
+│   └ ComplexSample.cs.min.md (txt)
+├ README/
+│ └ UTIL.cs Improve --prompt.md (txt)
+├ README.md (txt)
+├ UnityLifeCycle.md (txt)
+├ _/
+│ ├ =0.7.7.ver (DefaultAsset)
+│ ├ DemoScene/
+│ │ └ _ DemoScene.unity (scene)
+│ ├ Scripts/
+│ │ ├ @PROMPT/
+│ │ ├ INITManager.cs (cs | INITManager)
+│ │ ├ README/
+│ │ │ └ UTIL__v2_Board_MonoInterfaceFinder.cs.md (txt)
+│ │ └ UTIL/
+│ │   ├ UTIL.cs (cs | unknown)
+│ │   └ UTIL_FLOW.md (txt)
+│ ├ Textures/
+│ │ └ White_1x1.png (tex | 1×1 | RGB24)
+│ │   └ White_1x1 (Sprite)
+│ ├ TM/
+│ │ └ FONTS/
+│ │   ├ CONSOLA.TTF (Font)
+│ │   │ ├ Font Material (mat | GUI/Text Shader)
+│ │   │ └ Font Texture (tex | 256×256 | Alpha8)
+│ │   ├ CONSOLAI.TTF (Font)
+│ │   │ ├ Font Material (mat | GUI/Text Shader)
+│ │   │ └ Font Texture (tex | 256×256 | Alpha8)
+│ │   └ pixelplay.ttf (Font)
+│ │     ├ Font Material (mat | GUI/Text Shader)
+│ │     └ Font Texture (tex | 256×256 | Alpha8)
+│ └ UnityEditorUtil/
+│   └ Editor/
+│     └ ToTextEditorUtil.cs (cs | unknown)
+├ _CamSystem/
+│ ├ Mats/
+│ │ └ mat.mat (mat | URP/Lit)
+│ ├ Scenes/
+│ │ └ BirdViewCamManager Demo.unity (scene)
+│ └ Scripts/
+│   └ BirdViewCamManager.cs (cs | BirdViewCamManager)
+├ _DrawSystem/
+│ └ DrawManager.cs (cs | unknown)
+├ _Game/
+│ ├ UTILDependPerGame.md (txt)
+│ └ _Secure/
+├ _NodeSystem/
+│ ├ Scenes/
+│ │ └ NodeSystem Demo.unity (scene)
+│ └ Scripts/
+│   ├ GraphViewer/
+│   │ ├ Demo GameData.txt (txt)
+│   │ ├ GraphNodeManager.cs (cs | GraphNodeManager)
+│   │ ├ GraphNode_IO.cs (cs | GraphNode_IO)
+│   │ ├ Prefabs/
+│   │ │ └ Resources/
+│   │ │   └ pfGraphNode.prefab (pf | scale:1.0 | GraphNode_IO)
+│   │ ├ README.md (txt)
+│   │ └ Textures/
+│   │   └ White_1x1.png (tex | 1×1 | RGB24)
+│   │     └ White_1x1 (Sprite)
+│   └ NodeManager.cs (cs | NodeManager)
+├ _SyntaxSystem/
+│ └ SyntaxManager.cs (cs | unknown)
+├ _UIRebindingSystem/
+│ ├ DEBUG_IAEventsAssetController.cs (cs | DEBUG_IAEventsAssetController)
+│ ├ DEBUG_SampleGameSave.cs (cs | DEBUG_SampleGameSave)
+│ ├ DEBUG_UIRebindingMenuButton.cs (cs | DEBUG_UIRebindingMenuButton)
+│ ├ GameStore.cs (cs | GameStore)
+│ ├ InputActions/
+│ │ └ NewInputAction.inputactions (InputActionAsset)
+│ │   ├ character/jump (InputActionReference)
+│ │   └ character/shoot (InputActionReference)
+│ ├ Prefabs/
+│ │ ├ pfButton.prefab (pf | scale:1.0 | cr, btnO, autoFitH)
+│ │ ├ pftemplate -- Scroll View.prefab (pf | scale:1.0 | cr, sr, img)
+│ │ └ pftemplate --row.prefab (pf | scale:1.0 | autoFitH)
+│ ├ UIRebindingSystem --flow.md (txt)
+│ ├ UIRebindingSystem Demo.unity (scene)
+│ ├ UIRebindingSystem.cs (cs | UIRebindingSystem)
+│ └ UIRebindingSystem.md (txt)
+├ _UIToolTipSystem/
+│ ├ Prefabs/
+│ │ └ ToolTip.prefab (pf | scale:1.0 | cr, autoFitH, UIToolTip)
+│ ├ Scenes/
+│ │ └ ToolTip Demo.unity (scene)
+│ └ Scripts/
+│   └ UIToolTip.cs (cs | UIToolTip)
+└ _WebReqSystem/
+  ├ Scenes/
+  │ ├ WebReqSystem Demo.unity (scene)
+  │ └ WebReqSystem DemoSettings.lighting (LightingSettings)
+  ├ Scripts/
+  │ ├ Demo/
+  │ │ ├ DEBUG_WebRequest.cs (cs | DEBUG_WebRequest)
+  │ │ └ WebReqSystem Demo.unity (scene)
+  │ ├ NameGen/
+  │ │ └ JapaneseNameGenerator.cs (cs | JapaneseNameGenerator)
+  │ └ WebReqManager.cs (cs | WebReqManager)
+  └ Textures/
+    └ White_1x1.png (tex | 1×1 | RGB24)
+      └ White_1x1 (Sprite)
+
+```
+
+```animatorController-hierarchy
+=== Animator Controller: doorOpenCloseAnimController_stateMachineApproach ===
+
+Parameters:
+  doorOpen (trigger) = false
+  doorClose (trigger) = false
+  doorLocked (trigger) = false
+  doorSwaying (bool) = false
+
+Layers (1):
+├ Layer 0: Base Layer
+│   Weight: 0.00 | Blending: Override | IK: False | Sync: None
+
+│ Entry:
+│   └ (default transition) → doorClosedAnim(The Default State)
+│ States Info (7):
+│ ├ New State | Motion: (no motion) | Speed: 1.00x
+│ ├ doorClosedAnim | Motion: doorClosedAnim | Speed: 1.00x [DEFAULT]
+│ │ ├ [doorOpen = true] (exitTime:0.00 | transition:0.01s) → doorOpeningAnim
+│ │ └ [doorLocked = true] (exitTime:0.75 | transition:0.01s) → doorLockedJiggleAnim
+│ ├ doorClosingAnim | Motion: doorClosingAnim | Speed: 1.00x
+│ │ └ [auto] (exitTime:1.00 | transition:0.01s) → doorClosedAnim
+│ ├ doorOpenedAnim | Motion: doorOpenedAnim | Speed: 1.00x
+│ │ ├ [doorClose = true] (exitTime:0.00 | transition:0.01s) → doorClosingAnim
+│ │ └ [doorSwaying = true] (exitTime:0.75 | transition:0.30s) → doorSwayLoop
+│ ├ doorOpeningAnim | Motion: doorOpeningAnim | Speed: 1.00x
+│ │ └ [auto] (exitTime:1.00 | transition:0.01s) → doorOpenedAnim
+│ ├ doorLockedJiggleAnim | Motion: doorLockedJiggleAnim | Speed: 1.00x
+│ │ └ [auto] (exitTime:1.00 | transition:0.01s) → doorClosedAnim
+│ └ doorSwayLoop | Motion: doorSwayLoopAnim | Speed: 1.00x
+│   └ [doorSwaying = false] (exitTime:0.35 | transition:0.25s) → doorOpenedAnim
+
+
+```
+
