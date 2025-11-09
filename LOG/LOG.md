@@ -59,3 +59,54 @@ txt = TextAsset
 
 ```
 
+```animator-controller
+=== Animator Controller: doorOpenCloseAnimController_stateMachineApproach ===
+
+Parameters:
+  doorOpen (trigger) = false
+  doorClose (trigger) = false
+
+Layers (1):
+├ Layer 0: Base Layer
+│   Weight: 0.00 | Blending: Override | IK: False | Sync: None
+
+│ Default State: doorClosedAnim
+│ States (5):
+│ ├ New State | Motion: (no motion) | Speed: 1.00x
+│ ├ doorClosedAnim | Motion: doorClosedAnim | Speed: 1.00x [DEFAULT]
+│ │ └ [doorOpen = true] (exit:0.00 | dur:0.01s) → doorOpeningAnim
+│ ├ doorClosingAnim | Motion: doorClosingAnim | Speed: 1.00x
+│ │ └ [auto] (exit:1.00 | dur:0.01s) → doorClosedAnim
+│ ├ doorOpenedAnim | Motion: doorOpenedAnim | Speed: 1.00x
+│ │ └ [doorClose = true] (exit:0.00 | dur:0.01s) → doorClosingAnim
+│ └ doorOpeningAnim | Motion: doorOpeningAnim | Speed: 1.00x
+│   └ [auto] (exit:1.00 | dur:0.01s) → doorOpenedAnim
+
+
+```
+
+```animator-controller
+=== Animator Controller: doorOpenCloseAnimController_AnyStateExitApproach ===
+
+Parameters:
+  doorOpen (trigger) = false
+  doorClose (trigger) = false
+
+Layers (1):
+├ Layer 0: Base Layer
+│   Weight: 0.00 | Blending: Override | IK: False | Sync: None
+
+│ Any State:
+│   ├ [doorOpen = true] (exit:0.75 | dur:0.01s) → doorOpeningAnim
+│   ├ [doorClose = true] (exit:0.75 | dur:0.01s) → doorClosingAnim
+│ Default State: New State
+│ States (5):
+│ ├ New State | Motion: (no motion) | Speed: 1.00x [DEFAULT]
+│ ├ doorClosedAnim | Motion: doorClosedAnim | Speed: 1.00x
+│ ├ doorClosingAnim | Motion: doorClosingAnim | Speed: 1.00x
+│ ├ doorOpenedAnim | Motion: doorOpenedAnim | Speed: 1.00x
+│ └ doorOpeningAnim | Motion: doorOpeningAnim | Speed: 1.00x
+
+
+```
+
