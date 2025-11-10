@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using SPACE_UTIL;
+using SPACE_GAME;
 
-namespace SPACE_GAME
+namespace SPACE_CHECK
 {
-	public class Door : MonoBehaviour
+	public class Door_0 : MonoBehaviour
 	{
 		[SerializeField] bool locked = false;
 		bool isDoorOpen = false;
@@ -18,19 +19,19 @@ namespace SPACE_GAME
 			{
 				if (this.locked)
 				{
-					animator.TrySetTrigger(AnimParamType.doorLocked);
+					animator.trySetTrigger(AnimParamType.doorLockedJiggle);
 					return this.isDoorOpen;
 				}
 				else
 				{
-					animator.TrySetTrigger(AnimParamType.doorOpen);
+					animator.trySetTrigger(AnimParamType.doorOpen);
 					this.isDoorOpen = !this.isDoorOpen;
 					return this.isDoorOpen;
 				}
 			}
 			else
 			{
-				animator.TrySetTrigger(AnimParamType.doorClose);
+				animator.trySetTrigger(AnimParamType.doorClose);
 				this.isDoorOpen = !this.isDoorOpen;
 				return this.isDoorOpen;
 			}

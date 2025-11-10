@@ -9,7 +9,7 @@ namespace SPACE_CHECK
 {
 	public class DEBUG_DoorOpenClose : MonoBehaviour
 	{
-		[SerializeField] Door door;
+		[SerializeField] Door_0 door;
 		private void Update()
 		{
 			if(INPUT.M.InstantDown(0))

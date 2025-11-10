@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,24 +51,129 @@ namespace SPACE_GAME
 	{
 		inputActionAsset,
 		playerStats,
-		doorStates, // Added for door system save/load
+		doorRegeistryData, // Added for door system save/load
 	}
 
-	public enum AnimParamType
-	{
-		doorOpen,      // Trigger
-		doorClose,     // Trigger
-		doorLocked,    // Trigger (jiggle animation)
-		doorSwaying,   // Bool (looping sway animation)
-	}
-
-	public enum ResourceType
-	{
-		audio__doorLocked,
-		audio__doorOpen,
-		audio__doorClose,
-		audio__doorUnlock,
-		audio__doorCreak,
-	}
-	// ========== GLOBAL ENUM ============= //
+	
 }
+
+/*
+```
+
+---
+
+## Animator Controller Flow
+
+### **Approach 1: Layered State Machine (Recommended)**
+
+** Why Layers?** Locks and door movement are independent — player can lock/unlock without opening door.
+ ```
+═══════════════════════════════════════════════════════════
+LAYER 0: Door Movement (Weight: 1.0)
+═══════════════════════════════════════════════════════════
+
+Parameters:
+  doorOpen(Trigger)
+  doorClose(Trigger)
+  doorBlockedJiggle(Trigger)
+  isDoorOpen(Bool) — synced from DoorState
+
+States:
+├─ Entry → doorClosedIdle(default)
+│
+├─ doorClosedIdle
+│  ├─ [doorOpen trigger] → doorOpeningAnim
+│  └─ [doorBlockedJiggle trigger] → doorBlockedClosedJiggle → doorClosedIdle
+│
+├─ doorOpeningAnim (exitTime: 1.0) → doorOpenedIdle
+│
+├─ doorOpenedIdle
+│  ├─ [doorClose trigger] → doorClosingAnim
+│  └─ [doorBlockedJiggle trigger] → doorBlockedOpenedJiggle → doorOpenedIdle
+│
+└─ doorClosingAnim (exitTime: 1.0) → doorClosedIdle
+
+═══════════════════════════════════════════════════════════
+LAYER 1: Inside Lock (Weight: 1.0, Additive Blending)
+═══════════════════════════════════════════════════════════
+
+Parameters:
+  lockInside (Trigger)
+  unlockInside (Trigger)
+  isInsideLocked (Bool) — synced from DoorLockStateInside
+
+States:
+├─ Entry → insideUnlockedIdle (default)
+│
+├─ insideUnlockedIdle
+│  └─ [lockInside trigger] → insideLockingAnim → insideLockedIdle
+│
+└─ insideLockedIdle
+   └─ [unlockInside trigger] → insideUnlockingAnim → insideUnlockedIdle
+
+═══════════════════════════════════════════════════════════
+LAYER 2: Outside Lock (Weight: 1.0, Additive Blending)
+═══════════════════════════════════════════════════════════
+
+Parameters:
+  lockOutside (Trigger)
+  unlockOutside (Trigger)
+  isOutsideLocked (Bool) — synced from DoorLockStateOutside
+
+States:
+├─ Entry → outsideUnlockedIdle (default)
+│
+├─ outsideUnlockedIdle
+│  └─ [lockOutside trigger] → outsideLockingAnim → outsideLockedIdle
+│
+└─ outsideLockedIdle
+   └─ [unlockOutside trigger] → outsideUnlockingAnim → outsideUnlockedIdle
+
+═══════════════════════════════════════════════════════════
+LAYER 3: Common Lock (Weight: 1.0, Additive) — OPTIONAL
+═══════════════════════════════════════════════════════════
+// Only use this layer if usesCommonLock == true
+// Disable Layers 1 & 2 when using common lock
+
+Parameters:
+  lockCommon (Trigger)
+  unlockCommon (Trigger)
+
+States:
+├─ Entry → commonUnlockedIdle (default)
+│
+├─ commonUnlockedIdle
+│  └─ [lockCommon trigger] → commonLockingAnim → commonLockedIdle
+│
+└─ commonLockedIdle
+   └─ [unlockCommon trigger] → commonUnlockingAnim → commonUnlockedIdle
+```
+
+---
+
+## Why Layered Approach?
+
+✅ **Independent animations**: Lock handle rotates while door stays closed  
+✅ **No state explosion**: 2 states per layer instead of 8 combined states  
+✅ **Easy to extend**: Add swaying/blocking as Layer 4  
+✅ **Additive blending**: Lock animations don't interfere with door movement  
+
+---
+
+## Animation Hierarchy Mapping
+
+Based on your hierarchy:
+```
+door_hinged (Animator attached here)
+└─ door (animated pivot)
+   ├─ collider/trigger
+   ├─ door panel (animated Y-rotation for opening/closing)
+   │  └─ visual (mesh)
+   ├─ doorhandleOutside (animated Z-rotation for lock/unlock)
+   │  └─ visual (handle mesh)
+   ├─ doorhandleInside (animated Z-rotation for lock/unlock)
+   │  └─ visual (handle mesh)
+   └─ doorFrame (static)
+      └─ visual (frame mesh)
+	// ========== GLOBAL ENUM ============= //
+*/
