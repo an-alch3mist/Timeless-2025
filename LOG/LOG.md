@@ -126,3 +126,70 @@ anim = AnimClip
 
 ```
 
+```projectFolder-hierarchy
+=== Asset Type Abbreviations ===
+anim = AnimClip
+================================
+
+./Anims/
+├ ad/
+│ └ doorOpenCloseAnimController_AnyStateExitApproach.controller (AnimatorController)
+├ Anim/
+│ ├ door/
+│ │ ├ doorBlockedClosedJiggle.anim (anim | 1.00s | 60fps)
+│ │ ├ doorBlockedOpenedJiggle.anim (anim | 0.08s | 60fps)
+│ │ ├ doorClosedIdleAnim.anim (anim | 0.00s | 60fps)
+│ │ ├ doorClosingAnim.anim (anim | 0.50s | 60fps)
+│ │ ├ doorLockedClosedJiggle.anim (anim | 0.17s | 60fps)
+│ │ ├ doorOpenedIdleAnim.anim (anim | 0.00s | 60fps)
+│ │ ├ doorOpeningAnim.anim (anim | 0.67s | 60fps)
+│ │ └ doorSwayLoopAnim.anim (anim | 0.82s | 60fps)
+│ └ doorHandle/
+│   ├ commonLockedIdleAnim.anim (anim | 0.00s | 60fps)
+│   ├ commonLockingAnim.anim (anim | 0.67s | 60fps)
+│   ├ commonUnlockedIdle.anim (anim | 0.00s | 60fps)
+│   ├ commonUnlockingAnim.anim (anim | 0.52s | 60fps)
+│   ├ insideLockedIdle.anim (anim | 0.00s | 60fps)
+│   ├ insideLockingAnim.anim (anim | 0.67s | 60fps)
+│   ├ insideUnlockedIdle.anim (anim | 0.00s | 60fps)
+│   ├ insideUnlockingAnim.anim (anim | 0.58s | 60fps)
+│   ├ outsideLockedIdle.anim (anim | 0.00s | 60fps)
+│   ├ outsideLockingAnim.anim (anim | 0.83s | 60fps)
+│   ├ outsideUnlockedIdle.anim (anim | 0.00s | 60fps)
+│   └ outsideUnlockingAnim.anim (anim | 0.50s | 60fps)
+└ AnimController/
+  └ doorOpenCloseAnimController_stateMachineApproach.controller (AnimatorController)
+
+```
+
+```projectFolder-hierarchy
+=== Asset Type Abbreviations ===
+anim = AnimClip
+================================
+
+./Anim/
+├ door/
+│ ├ doorBlockedClosedJiggle.anim (anim | 1.00s | 60fps)
+│ ├ doorBlockedOpenedJiggle.anim (anim | 0.08s | 60fps)
+│ ├ doorClosedIdleAnim.anim (anim | 0.00s | 60fps)
+│ ├ doorClosingAnim.anim (anim | 0.50s | 60fps)
+│ ├ doorLockedClosedJiggle.anim (anim | 0.58s | 60fps)
+│ ├ doorOpenedIdleAnim.anim (anim | 0.00s | 60fps)
+│ ├ doorOpeningAnim.anim (anim | 0.67s | 60fps)
+│ └ doorSwayLoopAnim.anim (anim | 0.82s | 60fps)
+└ doorHandle/
+  ├ commonLockedIdleAnim.anim (anim | 0.00s | 60fps)
+  ├ commonLockingAnim.anim (anim | 0.67s | 60fps)
+  ├ commonUnlockedIdle.anim (anim | 0.00s | 60fps)
+  ├ commonUnlockingAnim.anim (anim | 0.52s | 60fps)
+  ├ insideLockedIdle.anim (anim | 0.00s | 60fps)
+  ├ insideLockingAnim.anim (anim | 0.67s | 60fps)
+  ├ insideUnlockedIdle.anim (anim | 0.00s | 60fps)
+  ├ insideUnlockingAnim.anim (anim | 0.58s | 60fps)
+  ├ outsideLockedIdle.anim (anim | 0.00s | 60fps)
+  ├ outsideLockingAnim.anim (anim | 0.83s | 60fps)
+  ├ outsideUnlockedIdle.anim (anim | 0.00s | 60fps)
+  └ outsideUnlockingAnim.anim (anim | 0.50s | 60fps)
+
+```
+
