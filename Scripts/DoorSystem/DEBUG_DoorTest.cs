@@ -61,7 +61,6 @@ namespace SPACE_CHECK
 					Debug.Log(C.method(this, "red", adMssg: "no door found in scene!"));
 				}
 			}
-
 			// Subscribe to events
 			DoorEvents.OnDoorStateChanged.AddListener(OnDoorStateChanged);
 			DoorEvents.OnDoorLockStateChanged.AddListener(OnDoorLockStateChanged);
