@@ -109,9 +109,14 @@ public interface IDoor
 	bool IsBlocked { get; }           // Supernatural block - cannot open/close
 	bool UsesCommonLock { get; }      // true = single lock (keypad/gate), false = separate inside/outside
 	bool CanBeLocked { get; }         // false = door can never be locked
-	bool IsAnimating { get; }         // CRITICAL: Prevents action spam and state corruption
 
-	DoorState CurrentState { get; }
+	// since all 4 are in different layers
+	bool IsAnimatingDoorPanel { get; }         // CRITICAL: Prevents action spam and state corruption
+	bool IsAnimatingDoorLockInside { get; }    // CRITICAL: Prevents action spam and state corruption
+	bool IsAnimatingDoorLockOutside { get; }   // CRITICAL: Prevents action spam and state corruption
+	bool IsAnimatingDoorLockCommon { get; }    // CRITICAL: Prevents action spam and state corruption
+
+	DoorState currDoorState { get; }
 	DoorLockState InsideLockState { get; }
 	DoorLockState OutsideLockState { get; }
 

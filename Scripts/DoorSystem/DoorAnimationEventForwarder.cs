@@ -31,26 +31,11 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 	{
 		Debug.Log(C.method(null, "grey", adMssg: "anim event"));
 	}
-
-	/// <summary>Call at START of doorOpeningAnim (optional)</summary>
-	public void AnimEvent_DoorOpeningStarted()
-	{
-		Debug.Log(C.method(null, "grey", adMssg: "anim event"));
-		_door?.OnAnimationComplete(AnimationEventType.DoorOpeningStarted);
-	}
-
 	/// <summary>Call at END of doorOpeningAnim (REQUIRED)</summary>
 	public void AnimEvent_DoorOpeningComplete()
 	{
 		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
 		_door?.OnAnimationComplete(AnimationEventType.DoorOpeningComplete);
-	}
-
-	/// <summary>Call at START of doorClosingAnim (optional)</summary>
-	public void AnimEvent_DoorClosingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.DoorClosingStarted);
 	}
 	/// <summary>Call at END of doorClosingAnim (REQUIRED)</summary>
 	public void AnimEvent_DoorClosingComplete()
@@ -58,27 +43,15 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
 		_door?.OnAnimationComplete(AnimationEventType.DoorClosingComplete);
 	}
+
 	// ========================================================================
 	// Inside Lock Events - Add these to inside lock animation clips
 	// ========================================================================
-
-	/// <summary>Call at START of insideLockingAnim (optional)</summary>
-	public void AnimEvent_InsideLockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.InsideLockingStarted);
-	}
 	/// <summary>Call at END of insideLockingAnim (REQUIRED)</summary>
 	public void AnimEvent_InsideLockingComplete()
 	{
 		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
 		_door?.OnAnimationComplete(AnimationEventType.InsideLockingComplete);
-	}
-	/// <summary>Call at START of insideUnlockingAnim (optional)</summary>
-	public void AnimEvent_InsideUnlockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.InsideUnlockingStarted);
 	}
 	/// <summary>Call at END of insideUnlockingAnim (REQUIRED)</summary>
 	public void AnimEvent_InsideUnlockingComplete()
@@ -89,24 +62,11 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 	// ========================================================================
 	// Outside Lock Events - Add these to outside lock animation clips
 	// ========================================================================
-
-	/// <summary>Call at START of outsideLockingAnim (optional)</summary>
-	public void AnimEvent_OutsideLockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.OutsideLockingStarted);
-	}
 	/// <summary>Call at END of outsideLockingAnim (REQUIRED)</summary>
 	public void AnimEvent_OutsideLockingComplete()
 	{
 		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
 		_door?.OnAnimationComplete(AnimationEventType.OutsideLockingComplete);
-	}
-	/// <summary>Call at START of outsideUnlockingAnim (optional)</summary>
-	public void AnimEvent_OutsideUnlockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.OutsideUnlockingStarted);
 	}
 	/// <summary>Call at END of outsideUnlockingAnim (REQUIRED)</summary>
 	public void AnimEvent_OutsideUnlockingComplete()
@@ -118,23 +78,11 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 	// Common Lock Events - Add these to common lock animation clips
 	// ========================================================================
 
-	/// <summary>Call at START of commonLockingAnim (optional)</summary>
-	public void AnimEvent_CommonLockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.CommonLockingStarted);
-	}
 	/// <summary>Call at END of commonLockingAnim (REQUIRED)</summary>
 	public void AnimEvent_CommonLockingComplete()
 	{
 		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
 		_door?.OnAnimationComplete(AnimationEventType.CommonLockingComplete);
-	}
-	/// <summary>Call at START of commonUnlockingAnim (optional)</summary>
-	public void AnimEvent_CommonUnlockingStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.CommonUnlockingStarted);
 	}
 	/// <summary>Call at END of commonUnlockingAnim (REQUIRED)</summary>
 	public void AnimEvent_CommonUnlockingComplete()
@@ -146,12 +94,6 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 	// Supernatural Events - Add these to sway animation clips
 	// ========================================================================
 
-	/// <summary>Call at START of doorSwayLoopAnim (optional)</summary>
-	public void AnimEvent_DoorSwayStarted()
-	{
-		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
-		_door?.OnAnimationComplete(AnimationEventType.DoorSwayStarted);
-	}
 	/// <summary>Call when transitioning OUT of doorSwayLoopAnim (REQUIRED)</summary>
 	public void AnimEvent_DoorSwayStopped()
 	{
@@ -159,3 +101,61 @@ public class DoorAnimationEventForwarder : MonoBehaviour
 		_door?.OnAnimationComplete(AnimationEventType.DoorSwayStopped);
 	}
 }
+
+/*
+	/// <summary>Call at START of insideLockingAnim (optional)</summary>
+	public void AnimEvent_InsideLockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.InsideLockingStarted);
+	}
+	/// <summary>Call at START of doorOpeningAnim (optional)</summary>
+	public void AnimEvent_DoorOpeningStarted()
+	{
+		Debug.Log(C.method(null, "grey", adMssg: "anim event"));
+		_door?.OnAnimationComplete(AnimationEventType.DoorOpeningStarted);
+	}
+	/// <summary>Call at START of doorClosingAnim (optional)</summary>
+	public void AnimEvent_DoorClosingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.DoorClosingStarted);
+	}
+	/// <summary>Call at START of commonLockingAnim (optional)</summary>
+	public void AnimEvent_CommonLockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.CommonLockingStarted);
+	}
+	/// <summary>Call at START of commonUnlockingAnim (optional)</summary>
+	public void AnimEvent_CommonUnlockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.CommonUnlockingStarted);
+	}
+	/// <summary>Call at START of doorSwayLoopAnim (optional)</summary>
+	public void AnimEvent_DoorSwayStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.DoorSwayStarted);
+	}
+	/// <summary>Call at START of insideUnlockingAnim (optional)</summary>
+	public void AnimEvent_InsideUnlockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.InsideUnlockingStarted);
+	}
+	/// <summary>Call at START of outsideLockingAnim (optional)</summary>
+	public void AnimEvent_OutsideLockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.OutsideLockingStarted);
+	}
+	/// <summary>Call at START of outsideUnlockingAnim (optional)</summary>
+	public void AnimEvent_OutsideUnlockingStarted()
+	{
+		Debug.Log(C.method(this, "grey", adMssg: "animeEvent"));
+		_door?.OnAnimationComplete(AnimationEventType.OutsideUnlockingStarted);
+	}
+
+*/

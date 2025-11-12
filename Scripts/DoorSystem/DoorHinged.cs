@@ -39,16 +39,6 @@ public class DoorHinged : MonoBehaviour, IDoor
 	[Tooltip("Layer mask for objects that block door closure (e.g. 'Box' layer)")]
 	[SerializeField] private LayerMask obstructionLayer;
 
-	// ========================================================================
-	// RUNTIME STATE - Current door state (private backing fields)
-	// ========================================================================
-
-	private DoorState _currentState;
-	private DoorLockState _insideLockState;
-	private DoorLockState _outsideLockState;
-	private bool _isBlocked = false;
-	private bool _isAnimating = false;
-
 	// Internal chaining state - when unlock animation completes, auto-open if this is true
 	private bool _pendingOpen = false;
 
@@ -62,14 +52,14 @@ public class DoorHinged : MonoBehaviour, IDoor
 	// INTERFACE PROPERTIES - Public read-only access to state
 	// ========================================================================
 
-	public bool IsBlocked => _isBlocked;
+	public bool IsBlocked { get; private set; } = false;
 	public bool UsesCommonLock => usesCommonLock;
 	public bool CanBeLocked => canBeLocked;
-	public bool IsAnimating => _isAnimating;
+	public bool IsAnimatingDoorPanel { get; private set; } = false;
 
-	public DoorState CurrentState => _currentState;
-	public DoorLockState InsideLockState => _insideLockState;
-	public DoorLockState OutsideLockState => _outsideLockState;
+	public DoorState currDoorState { get; private set; }
+	public DoorLockState InsideLockState { get; private set; }
+	public DoorLockState OutsideLockState { get; private set; }
 
 	public int MaxCloseRetries
 	{
@@ -83,7 +73,6 @@ public class DoorHinged : MonoBehaviour, IDoor
 
 	public event Action<DoorState> OnDoorStateChanged;
 	public event Action<DoorLockState, LockSide> OnLockStateChanged;
-
 	// ========================================================================
 	// UNITY LIFECYCLE
 	// ========================================================================
@@ -102,11 +91,10 @@ public class DoorHinged : MonoBehaviour, IDoor
 		// CRITICAL: Initialize state from inspector values
 		Init();
 	}
-
 	private void OnTriggerStay(Collider other)
 	{
 		// Only check during closing animation
-		if (_currentState != DoorState.Closing) return;
+		if (currDoorState != DoorState.Closing) return;
 		// if (!obstructionLayer.Contains(other.gameObject.layer)) return;
 		if (!obstructionLayer.contains(gameObject)) return;
 
@@ -118,7 +106,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 			// Reverse back to opening - door bounces back
 			Debug.Log($"[DoorHinged] Obstruction detected, retry {_closeRetryCount}/{maxCloseRetries}");
 			animator.SetTrigger("doorOpen");
-			_currentState = DoorState.Opening;
+			currDoorState = DoorState.Opening;
 		}
 		else
 		{
@@ -132,42 +120,40 @@ public class DoorHinged : MonoBehaviour, IDoor
 	// ========================================================================
 	// INITIALIZATION - Syncs animator to inspector state WITHOUT playing animations
 	// ========================================================================
-
 	public void Init()
 	{
 		// Copy inspector values to runtime state
-		_currentState = initialDoorState;
-		_insideLockState = initialInsideLockState;
-		_outsideLockState = initialOutsideLockState;
+		currDoorState = initialDoorState;
+		InsideLockState = initialInsideLockState;
+		OutsideLockState = initialOutsideLockState;
 
 		// Sync animator bools to match initial state - this makes animator jump to correct idle states
 		// WITHOUT playing transition animations (bools set initial layer states)
-		animator.SetBool("isDoorOpen", _currentState == DoorState.Opened);
-		animator.SetBool("isInsideLocked", _insideLockState == DoorLockState.Locked);
-		animator.SetBool("isOutsideLocked", _outsideLockState == DoorLockState.Locked);
+		animator.SetBool("isDoorOpen", currDoorState == DoorState.Opened);
+		animator.SetBool("isInsideLocked", InsideLockState == DoorLockState.Locked);
+		animator.SetBool("isOutsideLocked", OutsideLockState == DoorLockState.Locked);
 		animator.SetBool("isDoorSwaying", false);
 
 		// Force animator to evaluate immediately so door appears in correct state on first frame
 		animator.Update(0f);
 
-		Debug.Log($"[DoorHinged] Initialized - State: {_currentState}, InsideLock: {_insideLockState}, OutsideLock: {_outsideLockState}");
+		Debug.Log($"[DoorHinged] Initialized - State: {currDoorState}, InsideLock: {InsideLockState}, OutsideLock: {OutsideLockState}");
 	}
 
 	// ========================================================================
 	// PUBLIC API - Door Open/Close
 	// ========================================================================
-
 	public DoorActionResult TryOpen()
 	{
 		// Validation checks
-		if (_isAnimating) return DoorActionResult.AnimationInProgress;
-		if (_isBlocked) return DoorActionResult.Blocked;
-		if (_currentState == DoorState.Opened) return DoorActionResult.AlreadyInState;
-		if (_currentState == DoorState.Swaying) return DoorActionResult.Blocked; // Can't open while swaying
+		if (IsAnimatingDoorPanel) return DoorActionResult.AnimationInProgress;
+		if (IsBlocked) return DoorActionResult.Blocked;
+		if (currDoorState == DoorState.Opened) return DoorActionResult.AlreadyInState;
+		if (currDoorState == DoorState.Swaying) return DoorActionResult.Blocked; // Can't open while swaying
 
 		// Check if door is locked - need to unlock first
-		bool insideLocked = _insideLockState == DoorLockState.Locked;
-		bool outsideLocked = _outsideLockState == DoorLockState.Locked;
+		bool insideLocked = InsideLockState == DoorLockState.Locked;
+		bool outsideLocked = OutsideLockState == DoorLockState.Locked;
 
 		if (insideLocked || outsideLocked)
 		{
@@ -176,31 +162,33 @@ public class DoorHinged : MonoBehaviour, IDoor
 		}
 
 		// All checks passed - trigger opening animation
-		_isAnimating = true;
-		_currentState = DoorState.Opening;
-		animator.SetBool("isDoorOpen", true);
-		animator.SetTrigger("doorOpen");
+		IsAnimatingDoorPanel = true;
+		currDoorState = DoorState.Opening;
+		animator.trySetBool(DoorAnimParamType.isDoorOpen, true);
+		animator.trySetTrigger(DoorAnimParamType.doorOpen);
 
-		OnDoorStateChanged?.Invoke(DoorState.Opening);
+		OnDoorStateChanged?.Invoke(DoorState.Opening); // for now just log, without any action
 		return DoorActionResult.Success;
 	}
-
 	public DoorActionResult TryClose()
 	{
 		// Validation checks
-		if (_isAnimating) return DoorActionResult.AnimationInProgress;
-		if (_isBlocked) return DoorActionResult.Blocked;
-		if (_currentState == DoorState.Closed) return DoorActionResult.AlreadyInState;
-		if (_currentState == DoorState.Swaying) return DoorActionResult.Blocked; // Can't close while swaying
+		if (IsAnimatingDoorPanel) return DoorActionResult.AnimationInProgress;
+		if (IsBlocked) return DoorActionResult.Blocked;
+		if (currDoorState == DoorState.Closed) return DoorActionResult.AlreadyInState;
+		if (currDoorState == DoorState.Swaying) return DoorActionResult.Blocked; // Can't close while swaying
 
 		// Reset retry counter for new close attempt
 		_closeRetryCount = 0;
 
 		// Trigger closing animation
-		_isAnimating = true;
-		_currentState = DoorState.Closing;
-		animator.SetBool("isDoorOpen", false);
-		animator.SetTrigger("doorClose");
+		TryUnlock(LockSide.Inside);
+		TryUnlock(LockSide.Outside);
+
+		IsAnimatingDoorPanel = true;
+		currDoorState = DoorState.Closing;
+		animator.trySetBool(DoorAnimParamType.isDoorOpen, false);
+		animator.trySetTrigger(DoorAnimParamType.doorClose);
 
 		OnDoorStateChanged?.Invoke(DoorState.Closing);
 		return DoorActionResult.Success;
@@ -209,19 +197,18 @@ public class DoorHinged : MonoBehaviour, IDoor
 	// ========================================================================
 	// PUBLIC API - Lock/Unlock (Unified Interface)
 	// ========================================================================
-
 	public DoorActionResult TryLock(LockSide side)
 	{
-		if (_isAnimating) return DoorActionResult.AnimationInProgress;
+		if (IsAnimatingDoorPanel) return DoorActionResult.AnimationInProgress;
 		if (!canBeLocked) return DoorActionResult.Blocked; // Door cannot be locked
 
 		// Common lock path (keypad/gate with single lock mechanism)
 		if (usesCommonLock)
 		{
 			if (side != LockSide.Both) return DoorActionResult.WrongLockType; // Must use LockSide.Both
-			if (_insideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
+			if (InsideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
 
-			_isAnimating = true;
+			IsAnimatingDoorPanel = true;
 			animator.SetTrigger("lockCommon");
 			return DoorActionResult.Success;
 		}
@@ -231,33 +218,32 @@ public class DoorHinged : MonoBehaviour, IDoor
 
 		if (side == LockSide.Inside)
 		{
-			if (_insideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
-			_isAnimating = true;
+			if (InsideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
+			IsAnimatingDoorPanel = true;
 			animator.SetBool("isInsideLocked", true);
 			animator.SetTrigger("lockInside");
 		}
 		else // LockSide.Outside
 		{
-			if (_outsideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
-			_isAnimating = true;
+			if (OutsideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
+			IsAnimatingDoorPanel = true;
 			animator.SetBool("isOutsideLocked", true);
 			animator.SetTrigger("lockOutside");
 		}
 
 		return DoorActionResult.Success;
 	}
-
 	public DoorActionResult TryUnlock(LockSide side)
 	{
-		if (_isAnimating) return DoorActionResult.AnimationInProgress;
+		if (IsAnimatingDoorPanel) return DoorActionResult.AnimationInProgress;
 
 		// Common lock path
 		if (usesCommonLock)
 		{
 			if (side != LockSide.Both) return DoorActionResult.WrongLockType;
-			if (_insideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
+			if (InsideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
 
-			_isAnimating = true;
+			IsAnimatingDoorPanel = true;
 			animator.SetTrigger("unlockCommon");
 			return DoorActionResult.Success;
 		}
@@ -267,15 +253,15 @@ public class DoorHinged : MonoBehaviour, IDoor
 
 		if (side == LockSide.Inside)
 		{
-			if (_insideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
-			_isAnimating = true;
+			if (InsideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
+			IsAnimatingDoorPanel = true;
 			animator.SetBool("isInsideLocked", false);
 			animator.SetTrigger("unlockInside");
 		}
 		else // LockSide.Outside
 		{
-			if (_outsideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
-			_isAnimating = true;
+			if (OutsideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
+			IsAnimatingDoorPanel = true;
 			animator.SetBool("isOutsideLocked", false);
 			animator.SetTrigger("unlockOutside");
 		}
@@ -286,45 +272,41 @@ public class DoorHinged : MonoBehaviour, IDoor
 	// ========================================================================
 	// PUBLIC API - Supernatural Abilities
 	// ========================================================================
-
 	public DoorActionResult TryBlock()
 	{
-		if (_isBlocked) return DoorActionResult.AlreadyInState;
-		_isBlocked = true;
+		if (IsBlocked) return DoorActionResult.AlreadyInState;
+		IsBlocked = true;
 		return DoorActionResult.Success;
 	}
-
 	public DoorActionResult TryUnblock()
 	{
-		if (!_isBlocked) return DoorActionResult.AlreadyInState;
-		_isBlocked = false;
+		if (!IsBlocked) return DoorActionResult.AlreadyInState;
+		IsBlocked = false;
 		return DoorActionResult.Success;
 	}
-
 	public DoorActionResult TryStartSwaying()
 	{
-		if (_isAnimating) return DoorActionResult.AnimationInProgress;
-		if (_currentState == DoorState.Swaying) return DoorActionResult.AlreadyInState;
+		if (IsAnimatingDoorPanel) return DoorActionResult.AnimationInProgress;
+		if (currDoorState == DoorState.Swaying) return DoorActionResult.AlreadyInState;
 
 		// Supernatural override - force unlock both sides (no animation played, instant)
-		_insideLockState = DoorLockState.Unlocked;
-		_outsideLockState = DoorLockState.Unlocked;
+		InsideLockState = DoorLockState.Unlocked;
+		OutsideLockState = DoorLockState.Unlocked;
 		animator.SetBool("isInsideLocked", false);
 		animator.SetBool("isOutsideLocked", false);
 
 		// Start swaying
-		_isAnimating = true;
-		_currentState = DoorState.Swaying;
+		IsAnimatingDoorPanel = true;
+		currDoorState = DoorState.Swaying;
 		animator.SetBool("isDoorSwaying", true);
 		animator.SetTrigger("doorSwayStart");
 
 		OnDoorStateChanged?.Invoke(DoorState.Swaying);
 		return DoorActionResult.Success;
 	}
-
 	public DoorActionResult TryStopSwaying(DoorState targetState = DoorState.Opened)
 	{
-		if (_currentState != DoorState.Swaying) return DoorActionResult.AlreadyInState;
+		if (currDoorState != DoorState.Swaying) return DoorActionResult.AlreadyInState;
 
 		// Store target state for OnAnimationComplete callback
 		_targetStateAfterSway = targetState;
@@ -342,6 +324,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 
 	public void OnAnimationComplete(AnimationEventType eventType)
 	{
+		Debug.Log(C.method(this, "cyan"));
 		switch (eventType)
 		{
 			// ----------------------------------------------------------------
@@ -351,15 +334,15 @@ public class DoorHinged : MonoBehaviour, IDoor
 				// Opening animation started (optional callback)
 				break;
 			case AnimationEventType.DoorOpeningComplete:
-				_isAnimating = false;
-				_currentState = DoorState.Opened;
+				IsAnimatingDoorPanel = false;
+				currDoorState = DoorState.Opened;
 				animator.SetBool("isDoorOpen", true);  // ← ADD THIS
 				OnDoorStateChanged?.Invoke(DoorState.Opened);
 				break;
 
 			case AnimationEventType.DoorClosingComplete:
-				_isAnimating = false;
-				_currentState = DoorState.Closed;
+				IsAnimatingDoorPanel = false;
+				currDoorState = DoorState.Closed;
 				animator.SetBool("isDoorOpen", false);  // ← ADD THIS
 				OnDoorStateChanged?.Invoke(DoorState.Closed);
 				break;
@@ -376,8 +359,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.InsideLockingComplete:
-				_isAnimating = false;
-				_insideLockState = DoorLockState.Locked;
+				IsAnimatingDoorPanel = false;
+				InsideLockState = DoorLockState.Locked;
 				OnLockStateChanged?.Invoke(DoorLockState.Locked, LockSide.Inside);
 				break;
 
@@ -386,8 +369,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.InsideUnlockingComplete:
-				_isAnimating = false;
-				_insideLockState = DoorLockState.Unlocked;
+				IsAnimatingDoorPanel = false;
+				InsideLockState = DoorLockState.Unlocked;
 				OnLockStateChanged?.Invoke(DoorLockState.Unlocked, LockSide.Inside);
 
 				// CHAINING: If open was attempted while locked, auto-open now
@@ -406,8 +389,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.OutsideLockingComplete:
-				_isAnimating = false;
-				_outsideLockState = DoorLockState.Locked;
+				IsAnimatingDoorPanel = false;
+				OutsideLockState = DoorLockState.Locked;
 				OnLockStateChanged?.Invoke(DoorLockState.Locked, LockSide.Outside);
 				break;
 
@@ -416,8 +399,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.OutsideUnlockingComplete:
-				_isAnimating = false;
-				_outsideLockState = DoorLockState.Unlocked;
+				IsAnimatingDoorPanel = false;
+				OutsideLockState = DoorLockState.Unlocked;
 				OnLockStateChanged?.Invoke(DoorLockState.Unlocked, LockSide.Outside);
 
 				// CHAINING: If open was attempted while locked, auto-open now
@@ -436,9 +419,9 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.CommonLockingComplete:
-				_isAnimating = false;
-				_insideLockState = DoorLockState.Locked;
-				_outsideLockState = DoorLockState.Locked;
+				IsAnimatingDoorPanel = false;
+				InsideLockState = DoorLockState.Locked;
+				OutsideLockState = DoorLockState.Locked;
 				OnLockStateChanged?.Invoke(DoorLockState.Locked, LockSide.Both);
 				break;
 
@@ -447,9 +430,9 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.CommonUnlockingComplete:
-				_isAnimating = false;
-				_insideLockState = DoorLockState.Unlocked;
-				_outsideLockState = DoorLockState.Unlocked;
+				IsAnimatingDoorPanel = false;
+				InsideLockState = DoorLockState.Unlocked;
+				OutsideLockState = DoorLockState.Unlocked;
 				OnLockStateChanged?.Invoke(DoorLockState.Unlocked, LockSide.Both);
 
 				// CHAINING: If open was attempted while locked, auto-open now
@@ -468,8 +451,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 				break;
 
 			case AnimationEventType.DoorSwayStopped:
-				_isAnimating = false;
-				_currentState = _targetStateAfterSway;
+				IsAnimatingDoorPanel = false;
+				currDoorState = _targetStateAfterSway;
 				// animator.SetBool("isDoorOpen", _targetStateAfterSway == DoorState.Opened);
 				OnDoorStateChanged?.Invoke(_targetStateAfterSway);
 				break;

@@ -11,9 +11,9 @@ namespace SPACE_GAME
 		public bool IsBlocked => throw new NotImplementedException();
 		public bool UsesCommonLock => throw new NotImplementedException();
 		public bool CanBeLocked => throw new NotImplementedException();
-		public bool IsAnimating => throw new NotImplementedException();
+		public bool IsAnimatingDoorPanel => throw new NotImplementedException();
 
-		public DoorState CurrentState => throw new NotImplementedException();
+		public DoorState currDoorState => throw new NotImplementedException();
 		public DoorLockState InsideLockState => throw new NotImplementedException();
 		public DoorLockState OutsideLockState => throw new NotImplementedException();
 

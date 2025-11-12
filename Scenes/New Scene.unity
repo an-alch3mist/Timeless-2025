@@ -11656,12 +11656,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1849716363}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1861413907 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4206944368697534312, guid: c490c1cfd76483d4f86b517248e02cf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 5617835628738356054}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1864937626 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100910, guid: 2406a7cda1fb8ec42bc7b4593a564dc7,
@@ -12471,15 +12465,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2070244431}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23abac43cf36e3e4e8df954f7460910f, type: 3}
+  m_Script: {fileID: 11500000, guid: 63660d7514cdffd4bb9ef18a273cc655, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door: {fileID: 2070244434}
-  insideTrigger: {fileID: 2073921744}
-  outsideTrigger: {fileID: 2092664988}
-  player: {fileID: 1861413907}
+  _doorHinged: {fileID: 2070244434}
+  _console: 
 --- !u!1 &2072646036
 GameObject:
   m_ObjectHideFlags: 0
