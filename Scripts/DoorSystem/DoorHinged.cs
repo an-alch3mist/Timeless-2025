@@ -12,13 +12,13 @@ public class DoorHinged : MonoBehaviour, IDoor
 	// ========================================================================
 	// INSPECTOR CONFIGURATION - Serialized initial state
 	// ========================================================================
-
+	
 	[Header("Door Configuration")]
 	[Tooltip("Set initial door state - animator will sync to match at game start")]
-	[SerializeField] private DoorState initialDoorState = DoorState.Closed;
+	[SerializeField] private DoorState initialDoorState = DoorState.Opened;
 
 	[Tooltip("Set initial inside lock state")]
-	[SerializeField] private DoorLockState initialInsideLockState = DoorLockState.Unlocked;
+	[SerializeField] private DoorLockState initialInsideLockState = DoorLockState.Locked;
 
 	[Tooltip("Set initial outside lock state")]
 	[SerializeField] private DoorLockState initialOutsideLockState = DoorLockState.Unlocked;
@@ -93,6 +93,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 		// Validate references
 		if (animator == null)
 		{
+			
 			Debug.LogError($"[DoorHinged] Animator not assigned on {gameObject.name}!", this);
 			enabled = false;
 			return;
@@ -106,8 +107,8 @@ public class DoorHinged : MonoBehaviour, IDoor
 	{
 		// Only check during closing animation
 		if (_currentState != DoorState.Closing) return;
-		// if (!obstructionLayer.Contains(other.gameObject.layer)) return
-		if ((obstructionLayer.value & (1 << other.gameObject.layer)) == 0) return;
+		// if (!obstructionLayer.Contains(other.gameObject.layer)) return;
+		if (!obstructionLayer.contains(gameObject)) return;
 
 		// Obstruction detected during close
 		_closeRetryCount++;
@@ -141,8 +142,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 
 		// Sync animator bools to match initial state - this makes animator jump to correct idle states
 		// WITHOUT playing transition animations (bools set initial layer states)
-		// animator.SetBool("isDoorOpen", _currentState == DoorState.Opened);
-		animator.trySetBool(DoorAnimParamType.isDoorOpen, _currentState == DoorState.Opened);
+		animator.SetBool("isDoorOpen", _currentState == DoorState.Opened);
 		animator.SetBool("isInsideLocked", _insideLockState == DoorLockState.Locked);
 		animator.SetBool("isOutsideLocked", _outsideLockState == DoorLockState.Locked);
 		animator.SetBool("isDoorSwaying", false);
@@ -350,21 +350,22 @@ public class DoorHinged : MonoBehaviour, IDoor
 			case AnimationEventType.DoorOpeningStarted:
 				// Opening animation started (optional callback)
 				break;
-
 			case AnimationEventType.DoorOpeningComplete:
 				_isAnimating = false;
 				_currentState = DoorState.Opened;
+				animator.SetBool("isDoorOpen", true);  // ← ADD THIS
 				OnDoorStateChanged?.Invoke(DoorState.Opened);
-				break;
-
-			case AnimationEventType.DoorClosingStarted:
-				// Closing animation started (optional callback)
 				break;
 
 			case AnimationEventType.DoorClosingComplete:
 				_isAnimating = false;
 				_currentState = DoorState.Closed;
+				animator.SetBool("isDoorOpen", false);  // ← ADD THIS
 				OnDoorStateChanged?.Invoke(DoorState.Closed);
+				break;
+
+			case AnimationEventType.DoorClosingStarted:
+				// Closing animation started (optional callback)
 				break;
 
 			// ----------------------------------------------------------------
@@ -469,7 +470,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 			case AnimationEventType.DoorSwayStopped:
 				_isAnimating = false;
 				_currentState = _targetStateAfterSway;
-				animator.SetBool("isDoorOpen", _targetStateAfterSway == DoorState.Opened);
+				// animator.SetBool("isDoorOpen", _targetStateAfterSway == DoorState.Opened);
 				OnDoorStateChanged?.Invoke(_targetStateAfterSway);
 				break;
 

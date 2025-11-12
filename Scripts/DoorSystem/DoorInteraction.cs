@@ -2,217 +2,347 @@
 using SPACE_UTIL;
 
 /// <summary>
-/// Example script showing how to interact with IDoor from player/AI code.
-/// Attach to player controller or interaction system.
+/// Simple keyboard-based door interaction system.
+/// Attach to a GameObject in the scene (e.g. GameManager or Player).
+/// Handles open/close/lock/unlock based on player position relative to door triggers.
 /// </summary>
 public class DoorInteraction : MonoBehaviour
 {
-	[SerializeField] private LayerMask doorLayer;
-	[SerializeField] private float interactionRange = 10f;
-	[SerializeField] private KeyCode openCloseKey = KeyCode.E;
-	[SerializeField] private KeyCode lockKey = KeyCode.L;
-	[SerializeField] private KeyCode unlockKey = KeyCode.U;
+	[Header("Door Reference")]
+	[Tooltip("Drag the GameObject with DoorHinged component here")]
+	[SerializeField] private DoorHinged door;
 
-	[SerializeField] private IDoor _currentDoor; // Door player is looking at
-	[SerializeField] private Camera _playerCamera;
+	[Header("Trigger References")]
+	[Tooltip("Drag the 'door inside trigger' GameObject here")]
+	[SerializeField] private Collider insideTrigger;
 
-	private void Start()
-	{
-		Debug.Log(C.method(this));
-		_currentDoor = this.GetComponent<DoorHinged>();
-		Debug.Log(_currentDoor.CanBeLocked);
-		// _playerCamera = Camera.main;
+	[Tooltip("Drag the 'door outside trigger' GameObject here")]
+	[SerializeField] private Collider outsideTrigger;
 
-		// Example: Subscribe to door events for UI feedback
-		// In production, use event bus or UI manager
-	}
-	private void Update()
-	{
-		// DetectDoorLookAt();
-		HandleInput();
-	}
+	[Header("Player Reference")]
+	[Tooltip("Drag the player GameObject here (works with CharacterController, Rigidbody, or any GameObject)")]
+	[SerializeField] private GameObject player;
 
-	private void DetectDoorLookAt()
-	{
-		Ray ray = _playerCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-
-		if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, doorLayer))
-		{
-			IDoor door = hit.collider.GetComponent<IDoor>();
-
-			if (door != _currentDoor)
-			{
-				_currentDoor = door;
-				// Show UI prompt: "Press E to open/close"
-			}
-		}
-		else
-		{
-			if (_currentDoor != null)
-			{
-				_currentDoor = null;
-				// Hide UI prompt
-			}
-		}
-	}
-	private void HandleInput()
-	{
-		if (_currentDoor == null) return;
-
-		// Open/Close door
-		if (Input.GetKeyDown(openCloseKey))
-		{
-			DoorActionResult result = _currentDoor.CurrentState == DoorState.Closed
-				? _currentDoor.TryOpen()
-				: _currentDoor.TryClose();
-
-			HandleDoorActionResult(result, "open/close");
-		}
-
-		// Lock door (from player's side - determine inside/outside based on player position)
-		if (Input.GetKeyDown(lockKey))
-		{
-			LockSide side = DeterminePlayerSide();
-			DoorActionResult result = _currentDoor.TryLock(side);
-			HandleDoorActionResult(result, justToLogAction: "lock");
-		}
-
-		// Unlock door
-		if (Input.GetKeyDown(unlockKey))
-		{
-			LockSide side = DeterminePlayerSide();
-			DoorActionResult result = _currentDoor.TryUnlock(side);
-			HandleDoorActionResult(result, "unlock");
-		}
-	}
-
-	private void HandleDoorActionResult(DoorActionResult result, string justToLogAction)
-	{
-		// Provide player feedback based on result
-		switch (result)
-		{
-			case DoorActionResult.Success:
-				Debug.Log($"Door {justToLogAction} successful".colorTag("lime"));
-				// Play success audio
-				break;
-
-			case DoorActionResult.AnimationInProgress:
-				Debug.Log("Wait for door animation to finish".colorTag("cyan"));
-				// Play "wait" audio or show UI
-				break;
-
-			case DoorActionResult.Locked:
-				Debug.Log("Door is locked! Unlock it first".colorTag("cyan"));
-				// Play locked jiggle sound, show UI prompt
-				break;
-
-			case DoorActionResult.Blocked:
-				Debug.Log("Something supernatural is blocking the door...".colorTag("cyan"));
-				// Play eerie audio, trigger horror event
-				break;
-
-			case DoorActionResult.AlreadyInState:
-				Debug.Log("Door is already in that state".colorTag("cyan"));
-				break;
-
-			case DoorActionResult.WrongLockType:
-				Debug.LogError("Code error: wrong lock type used!".colorTag("cyan"));
-				break;
-
-			case DoorActionResult.ObstructionDetected:
-				Debug.Log("Door blocked by object".colorTag("cyan"));
-				break;
-		}
-	}
-	private LockSide DeterminePlayerSide()
-	{
-		// Determine if player is on inside or outside of door
-		// Simple approach: check player position relative to door forward direction
-
-		Transform doorTransform = (_currentDoor as MonoBehaviour)?.transform;
-		if (doorTransform == null) return LockSide.Inside; // Fallback
-
-		Vector3 playerToDoor = doorTransform.position - transform.position;
-		float dot = Vector3.Dot(doorTransform.forward, playerToDoor.normalized);
-
-		// If player is in front of door's forward direction = outside, behind = inside
-		return dot > 0 ? LockSide.Outside : LockSide.Inside;
-	}
+	// Runtime state tracking
+	private bool _isPlayerInside = false;
+	private bool _isPlayerOutside = false;
 
 	// ========================================================================
-	// Example: Supernatural AI System
+	// UNITY LIFECYCLE
 	// ========================================================================
 
-	/// <summary>
-	/// Example of how supernatural AI would interact with doors
-	/// </summary>
-	public void SupernaturalEvent_BlockDoor(IDoor door)
+	private void Awake()
 	{
-		door.TryBlock();
-		Debug.Log("Ghost has blocked the door!");
-		// Play spooky effects
-	}
-	public void SupernaturalEvent_SwayDoor(IDoor door)
-	{
-		if (door.TryStartSwaying() == DoorActionResult.Success)
+		// Validate all required references
+		if (door == null)
 		{
-			Debug.Log("Door begins swaying ominously...");
-			// Start timer to stop swaying after 3 seconds
-			Invoke(nameof(StopSwaying), 3f);
+			Debug.LogError("[DoorInteraction] Door reference not assigned!", this);
+			enabled = false;
+			return;
 		}
-	}
-	private void StopSwaying()
-	{
-		if (_currentDoor != null && _currentDoor.CurrentState == DoorState.Swaying)
+
+		if (insideTrigger == null || outsideTrigger == null)
 		{
-			// Stop swaying and leave door in opened state
-			_currentDoor.TryStopSwaying(DoorState.Opened);
+			Debug.LogError("[DoorInteraction] Trigger references not assigned!", this);
+			enabled = false;
+			return;
 		}
-	}
 
-	// ========================================================================
-	// Example: Event Listening
-	// ========================================================================
+		if (player == null)
+		{
+			Debug.LogError("[DoorInteraction] Player reference not assigned!", this);
+			enabled = false;
+			return;
+		}
 
-	private void SubscribeToDoorEvents(IDoor door)
-	{
-		// Example: Audio system listens to door state changes
+		// Ensure triggers are marked as triggers
+		if (!insideTrigger.isTrigger)
+		{
+			Debug.LogWarning("[DoorInteraction] Inside trigger is not marked as trigger! Fixing...", insideTrigger);
+			insideTrigger.isTrigger = true;
+		}
+
+		if (!outsideTrigger.isTrigger)
+		{
+			Debug.LogWarning("[DoorInteraction] Outside trigger is not marked as trigger! Fixing...", outsideTrigger);
+			outsideTrigger.isTrigger = true;
+		}
+
+		// Subscribe to door state events for logging
 		door.OnDoorStateChanged += OnDoorStateChanged;
 		door.OnLockStateChanged += OnLockStateChanged;
 	}
-	private void UnsubscribeFromDoorEvents(IDoor door)
-	{
-		door.OnDoorStateChanged -= OnDoorStateChanged;
-		door.OnLockStateChanged -= OnLockStateChanged;
-	}
-	private void OnDoorStateChanged(DoorState newState)
-	{
-		Debug.Log($"Door state changed to: {newState}");
 
-		switch (newState)
+	private void OnDestroy()
+	{
+		// Unsubscribe from events to prevent memory leaks
+		if (door != null)
 		{
-			case DoorState.Opening:
-				// Play door creak audio
+			door.OnDoorStateChanged -= OnDoorStateChanged;
+			door.OnLockStateChanged -= OnLockStateChanged;
+		}
+	}
+
+	private void Update()
+	{
+		// Update player position relative to triggers
+		UpdatePlayerPosition();
+
+		// Handle keyboard input
+		HandleInput();
+	}
+
+	// ========================================================================
+	// PLAYER POSITION TRACKING
+	// ========================================================================
+
+	private void UpdatePlayerPosition()
+	{
+		if (player == null) return;
+
+		// Check if player is inside either trigger
+		_isPlayerInside = insideTrigger.bounds.Contains(player.transform.position);
+		_isPlayerOutside = outsideTrigger.bounds.Contains(player.transform.position);
+	}
+
+	// ========================================================================
+	// INPUT HANDLING
+	// ========================================================================
+
+	private void HandleInput()
+	{
+		// KeyCode.O - Open door
+		if (Input.GetKeyDown(KeyCode.O))
+		{
+			HandleOpenDoor();
+		}
+
+		// KeyCode.C - Close door
+		if (Input.GetKeyDown(KeyCode.C))
+		{
+			HandleCloseDoor();
+		}
+
+		// KeyCode.L - Lock door (side-specific)
+		if (Input.GetKeyDown(KeyCode.L))
+		{
+			HandleLockDoor();
+		}
+
+		// KeyCode.U - Unlock door (side-specific)
+		if (Input.GetKeyDown(KeyCode.U))
+		{
+			HandleUnlockDoor();
+		}
+	}
+
+	// ========================================================================
+	// DOOR ACTIONS
+	// ========================================================================
+
+	private void HandleOpenDoor()
+	{
+		Debug.Log(C.method(this, "yellow", adMssg: "Attempting to open door"));
+
+		DoorActionResult result = door.TryOpen();
+
+		switch (result)
+		{
+			case DoorActionResult.Success:
+				Debug.Log(C.method(this, "green", adMssg: "Door opening..."));
 				break;
-			case DoorState.Opened:
-				// Play door open complete sound
+
+			case DoorActionResult.Locked:
+				Debug.Log(C.method(this, "red", adMssg: "Door is locked! Unlock it first with KeyCode.U"));
 				break;
-			case DoorState.Closing:
-				// Play door closing audio
+
+			case DoorActionResult.AlreadyInState:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is already open"));
 				break;
-			case DoorState.Closed:
-				// Play door slam sound
+
+			case DoorActionResult.AnimationInProgress:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is currently animating, please wait"));
 				break;
-			case DoorState.Swaying:
-				// Play eerie creaking loop
+
+			case DoorActionResult.Blocked:
+				Debug.Log(C.method(this, "red", adMssg: "Door is supernaturally blocked!"));
+				break;
+
+			default:
+				Debug.Log(C.method(this, "red", adMssg: $"Failed to open door: {result}"));
 				break;
 		}
 	}
-	private void OnLockStateChanged(DoorLockState newState, LockSide side)
-	{
-		Debug.Log($"Lock state changed to: {newState} on {side} side");
 
-		// Play lock/unlock sound effect
-		// Update UI to show lock state
+	private void HandleCloseDoor()
+	{
+		Debug.Log(C.method(this, "yellow", adMssg: "Attempting to close door"));
+
+		DoorActionResult result = door.TryClose();
+
+		switch (result)
+		{
+			case DoorActionResult.Success:
+				Debug.Log(C.method(this, "green", adMssg: "Door closing..."));
+				break;
+
+			case DoorActionResult.AlreadyInState:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is already closed"));
+				break;
+
+			case DoorActionResult.AnimationInProgress:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is currently animating, please wait"));
+				break;
+
+			case DoorActionResult.Blocked:
+				Debug.Log(C.method(this, "red", adMssg: "Door is supernaturally blocked!"));
+				break;
+
+			default:
+				Debug.Log(C.method(this, "red", adMssg: $"Failed to close door: {result}"));
+				break;
+		}
+	}
+
+	private void HandleLockDoor()
+	{
+		// Determine which side to lock based on player position
+		LockSide side = GetPlayerLockSide();
+
+		if (side == LockSide.Both)
+		{
+			Debug.Log(C.method(this, "red", adMssg: "You must be inside or outside a trigger to lock the door!"));
+			return;
+		}
+
+		Debug.Log(C.method(this, "yellow", adMssg: $"Attempting to lock door from {side} side"));
+
+		DoorActionResult result = door.TryLock(side);
+
+		switch (result)
+		{
+			case DoorActionResult.Success:
+				Debug.Log(C.method(this, "green", adMssg: $"Locking door from {side} side..."));
+				break;
+
+			case DoorActionResult.AlreadyInState:
+				Debug.Log(C.method(this, "orange", adMssg: $"{side} lock is already locked"));
+				break;
+
+			case DoorActionResult.AnimationInProgress:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is currently animating, please wait"));
+				break;
+
+			case DoorActionResult.Blocked:
+				Debug.Log(C.method(this, "red", adMssg: "Door cannot be locked (canBeLocked = false)"));
+				break;
+
+			case DoorActionResult.WrongLockType:
+				Debug.Log(C.method(this, "red", adMssg: "Wrong lock type! Check if door uses common lock"));
+				break;
+
+			default:
+				Debug.Log(C.method(this, "red", adMssg: $"Failed to lock door: {result}"));
+				break;
+		}
+	}
+
+	private void HandleUnlockDoor()
+	{
+		// Determine which side to unlock based on player position
+		LockSide side = GetPlayerLockSide();
+
+		if (side == LockSide.Both)
+		{
+			Debug.Log(C.method(this, "red", adMssg: "You must be inside or outside a trigger to unlock the door!"));
+			return;
+		}
+
+		Debug.Log(C.method(this, "yellow", adMssg: $"Attempting to unlock door from {side} side"));
+
+		DoorActionResult result = door.TryUnlock(side);
+
+		switch (result)
+		{
+			case DoorActionResult.Success:
+				Debug.Log(C.method(this, "green", adMssg: $"Unlocking door from {side} side..."));
+				break;
+
+			case DoorActionResult.AlreadyInState:
+				Debug.Log(C.method(this, "orange", adMssg: $"{side} lock is already unlocked"));
+				break;
+
+			case DoorActionResult.AnimationInProgress:
+				Debug.Log(C.method(this, "orange", adMssg: "Door is currently animating, please wait"));
+				break;
+
+			case DoorActionResult.WrongLockType:
+				Debug.Log(C.method(this, "red", adMssg: "Wrong lock type! Check if door uses common lock"));
+				break;
+
+			default:
+				Debug.Log(C.method(this, "red", adMssg: $"Failed to unlock door: {result}"));
+				break;
+		}
+	}
+
+	// ========================================================================
+	// HELPER METHODS
+	// ========================================================================
+
+	private LockSide GetPlayerLockSide()
+	{
+		if (door.UsesCommonLock)
+		{
+			// Common lock doors require LockSide.Both
+			return (_isPlayerInside || _isPlayerOutside) ? LockSide.Both : LockSide.Both;
+		}
+
+		// Separate locks - determine based on trigger position
+		if (_isPlayerInside && !_isPlayerOutside)
+			return LockSide.Inside;
+		else if (_isPlayerOutside && !_isPlayerInside)
+			return LockSide.Outside;
+		else
+			return LockSide.Both; // Invalid state - not in either trigger
+	}
+
+	// ========================================================================
+	// EVENT CALLBACKS - For logging state changes
+	// ========================================================================
+
+	private void OnDoorStateChanged(DoorState newState)
+	{
+		Debug.Log(C.method(this, "cyan", adMssg: $"Door state changed to: {newState}"));
+	}
+
+	private void OnLockStateChanged(DoorLockState newLockState, LockSide side)
+	{
+		Debug.Log(C.method(this, "cyan", adMssg: $"Lock state changed: {side} is now {newLockState}"));
+	}
+
+	// ========================================================================
+	// DEBUG VISUALIZATION
+	// ========================================================================
+
+	private void OnDrawGizmos()
+	{
+		if (insideTrigger != null)
+		{
+			Gizmos.color = new Color(0, 1, 0, 0.3f); // Green
+			Gizmos.DrawCube(insideTrigger.bounds.center, insideTrigger.bounds.size);
+		}
+
+		if (outsideTrigger != null)
+		{
+			Gizmos.color = new Color(1, 0, 0, 0.3f); // Red
+			Gizmos.DrawCube(outsideTrigger.bounds.center, outsideTrigger.bounds.size);
+		}
+
+		if (player != null)
+		{
+			Gizmos.color = Color.yellow;
+			Gizmos.DrawWireSphere(player.transform.position, 0.5f);
+		}
 	}
 }
