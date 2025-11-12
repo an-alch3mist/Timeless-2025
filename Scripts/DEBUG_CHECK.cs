@@ -15,12 +15,15 @@ namespace SPACE_CHECK
 		private void Start()
 		{
 			Debug.Log(C.method(this));
-			// this.checkAlAnimParamExist();
+			this.checkAlAnimParamExist();
 		}
 
 		[SerializeField] Animator _animator;
 		void checkAlAnimParamExist()
 		{
+			this._animator.checkAllParamExistInAnimatorController<DoorAnimParamType>();
+			return;
+
 			foreach (var doorParam in C.getEnumValues<DoorAnimParamType>())
 			{
 				if (this._animator.trySetTrigger(doorParam))

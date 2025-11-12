@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+// impoved via: https://claude.ai/share/8f49bd28-aa38-4ce4-93b0-56aee148448a
 
 // ============================================================================
 // ENUMS - Stable API that won't break existing code when adding new states
@@ -39,6 +40,7 @@ public enum DoorActionResult
 	ObstructionDetected     // Object blocking door closure
 }
 
+// named exact same inside animatorCOntroller too.
 public enum DoorAnimParamType
 {
 	// trigger
