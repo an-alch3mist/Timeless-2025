@@ -30,7 +30,24 @@ namespace SPACE_GAME
 			GameStore.IA.LoadBindingOverridesFromJson(LOG.LoadGameData(GameDataType.inputActionAsset));
 			GameStore.playerStats = LOG.LoadGameData<PlayerStats>(GameDataType.playerStats);
 		}
+
+		#region check usage(with playerStats as example)
+		private float currGameTime = 0f; // counter: reset at start of game
+		private void Update()
+		{
+			currGameTime += Time.unscaledDeltaTime;
+		}
+
+		private void OnApplicationQuit()
+		{
+			Debug.Log(C.method(this, "orange"));
+			GameStore.playerStats.gameTime += currGameTime;
+			GameStore.playerStats.HISTORY.Add(currGameTime);
+			GameStore.playerStats.Save();
+		}
+		#endregion
 	}
+
 
 	// ================ GLOBAL CLASS ============== //
 	[System.Serializable]
