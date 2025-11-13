@@ -7,7 +7,7 @@ using SPACE_UTIL;
 /// Supports separate inside/outside locks OR single common lock (keypad/gate).
 /// All state changes flow through Try* methods → Animator → OnAnimationComplete callbacks.
 /// </summary>
-public class DoorHinged : MonoBehaviour, IDoor
+public class DoorHinged : MonoBehaviour
 {
 	// ========================================================================
 	// INSPECTOR CONFIGURATION - Serialized initial state
@@ -61,7 +61,7 @@ public class DoorHinged : MonoBehaviour, IDoor
 	public DoorLockState InsideLockState { get; private set; }
 	public DoorLockState OutsideLockState { get; private set; }
 
-	public int MaxCloseRetries
+	public int maxClosingRetries
 	{
 		get => maxCloseRetries;
 		set => maxCloseRetries = Mathf.Max(1, value); // Ensure at least 1 retry

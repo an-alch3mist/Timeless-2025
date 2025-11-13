@@ -13,13 +13,17 @@ public enum DoorState
 	Opened,
 	Closing,
 	Swaying // Supernatural entity control
+	// BlockedOpened, // TODO
+	// BlockedClosed, // TODO
 }
 
 public enum DoorLockState
 {
 	Locked,
+	Locking,
 	Unlocked,
-	UnlockedJammed // Cannot be locked by player - always unlocked
+	Unlocking,
+	UnlockedJam, // Cannot be locked by player - always unlocked
 }
 
 public enum LockSide
@@ -32,8 +36,10 @@ public enum LockSide
 public enum DoorActionResult
 {
 	Success,
+	Failure,
 	Blocked,                // Door is supernaturally blocked
 	Locked,                 // Attempted open but door is locked
+	UnlockedJam,
 	AlreadyInState,         // Already in target state (e.g. already open)
 	AnimationInProgress,    // Another action is animating - prevents spam
 	WrongLockType,          // Tried LockSide.Both on separate locks or vice versa
@@ -102,25 +108,31 @@ public enum AnimationEventType
 
 public interface IDoor
 {
+
+	// ========================================================================
+	// CONFIGURATION CONSTANT THROUGH OUT GAME
+	// ========================================================================
+	bool canBeLocked { get; set; }         // false = door can never be locked
+	bool usesCommonLock { get; set; }      // true = single lock (keypad/gate), false = separate inside/outside
+	int maxClosingRetries { get; set; } // Default = 5 - how many times to retry closing before forcing
+
+
 	// ========================================================================
 	// READ-ONLY PROPERTIES - State can only change through Try* methods
 	// ========================================================================
-
-	bool IsBlocked { get; }           // Supernatural block - cannot open/close
-	bool UsesCommonLock { get; }      // true = single lock (keypad/gate), false = separate inside/outside
-	bool CanBeLocked { get; }         // false = door can never be locked
-
-	// since all 4 are in different layers
-	bool IsAnimatingDoorPanel { get; }         // CRITICAL: Prevents action spam and state corruption
-	bool IsAnimatingDoorLockInside { get; }    // CRITICAL: Prevents action spam and state corruption
-	bool IsAnimatingDoorLockOutside { get; }   // CRITICAL: Prevents action spam and state corruption
-	bool IsAnimatingDoorLockCommon { get; }    // CRITICAL: Prevents action spam and state corruption
-
+	bool isBlocked { get; set; }           // Supernatural block - cannot open/close
 	DoorState currDoorState { get; }
-	DoorLockState InsideLockState { get; }
-	DoorLockState OutsideLockState { get; }
+	DoorLockState currInsideLockState { get; }
+	DoorLockState currOutsideLockState { get; }
 
 	// ========================================================================
+	// since all 4 are in different layers
+	bool isAnimatingDoorPanel { get; set; }         // CRITICAL: Prevents action spam and state corruption in layer: 0
+	bool isAnimatingDoorLockInside { get; set; }    // CRITICAL: Prevents action spam and state corruption in layer: 1
+	bool isAnimatingDoorLockOutside { get; set; }   // CRITICAL: Prevents action spam and state corruption in layer: 2
+	bool isAnimatingDoorLockCommon { get; set; }    // CRITICAL: Prevents action spam and state corruption in layer: 3
+	
+
 	// EVENTS - Enables loosely-coupled systems (audio, AI, quests)
 	// ========================================================================
 
@@ -192,6 +204,11 @@ public interface IDoor
 	DoorActionResult TryStopSwaying(DoorState targetState = DoorState.Opened);
 
 	// ========================================================================
+	// JUST TO LOG
+	// ========================================================================
+	string getStr { get; }
+
+	// ========================================================================
 	// ANIMATION CALLBACK - Called by DoorAnimationEventForwarder
 	// ========================================================================
 
@@ -201,9 +218,4 @@ public interface IDoor
 	/// </summary>
 	void OnAnimationComplete(AnimationEventType eventType);
 
-	// ========================================================================
-	// CONFIGURATION
-	// ========================================================================
-
-	int MaxCloseRetries { get; set; } // Default = 5 - how many times to retry closing before forcing
 }
