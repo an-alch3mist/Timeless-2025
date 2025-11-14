@@ -23,6 +23,8 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 
 	public bool usesCommonLock { get; set; }
 	public bool canBeLocked { get; set; }
+	public bool initInsideUnlockedJammed { get; set; }
+	public bool initOutsideUnlockedJammed { get; set; }
 	public int maxClosingRetries { get; set; }
 
 	public bool isBlocked { get; set; }
@@ -44,6 +46,8 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		this.usesCommonLock = this._usesCommonLock;
 		this.canBeLocked = this.canBeLocked;
 		this.maxClosingRetries = this._maxClosingRetries;
+		this.initInsideUnlockedJammed = (this._initDoorLockInside == DoorLockState.UnlockedJam);
+		this.initOutsideUnlockedJammed = (this._initDoorLockOutside == DoorLockState.UnlockedJam);
 
 		this.isBlocked = this._initIsBlocked;
 		this.currDoorState = this._initDoorState;
@@ -54,15 +58,15 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		// WITHOUT playing transition animations (bools set initial layer states)
 		this._animator.trySetBool(
 			DoorAnimParamType.isDoorOpen,
-			val: currDoorState == DoorState.Opened);
+			val: _initDoorState == DoorState.Opened);
 
 		this._animator.trySetBool(
 			DoorAnimParamType.isInsideLocked,
-			val: currInsideLockState == DoorLockState.Locked);
+			val: _initDoorLockInside == DoorLockState.Locked);
 
 		this._animator.trySetBool(
 			DoorAnimParamType.isOutsideLocked,
-			val: currOutsideLockState == DoorLockState.Locked);
+			val: _initDoorLockOutside == DoorLockState.Locked);
 
 		// Force animator to evaluate immediately so door appears in correct state on first frame
 		this._animator.Update(0f);
@@ -131,7 +135,6 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 	}
 
 	#region public API: Try Perform
-
 	// flow: 
 	// canont perform
 	// success
@@ -197,11 +200,18 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 	{
 		Debug.Log(C.method(this, "lime"));
 
+		#region commonLock
+		if(this.usesCommonLock == true)
+		{
+			return performCommonLock();
+		}
+		#endregion
+
 		if (side == LockSide.Inside)
 		{
 			// cannot perform
-			if (this.currInsideLockState == DoorLockState.UnlockedJam)
-				return DoorActionResult.UnlockedJam;
+			if (this.initInsideUnlockedJammed == true)
+				return DoorActionResult.UnlockedJam; // jammed
 			// success
 			if (this.currInsideLockState == DoorLockState.Unlocked)
 			{
@@ -217,8 +227,8 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		else if (side == LockSide.Outside)
 		{
 			// cannot perform
-			if (this.currOutsideLockState == DoorLockState.UnlockedJam)
-				return DoorActionResult.UnlockedJam;
+			if (this.initOutsideUnlockedJammed == true)
+				return DoorActionResult.UnlockedJam; // jammed
 			// success
 			if (this.currOutsideLockState == DoorLockState.Unlocked)
 			{
@@ -233,14 +243,64 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		}
 		return DoorActionResult.Failure;
 	}
+	#region ad
+	DoorActionResult performCommonLock()
+	{
+		// doesnt depend on LockSide side.
+		// since i shall jam one of the locks and hide it, when uses common lock is true
+		// one of animation(say open lock) extends in both side to make appear as common lock(visible from both sides)
+
+		// cannot perform
+		bool allLocksUnlockedJammed = true;
+		if (this.initInsideUnlockedJammed == false) allLocksUnlockedJammed = false;
+		if (this.initOutsideUnlockedJammed == false) allLocksUnlockedJammed = false;
+		if (allLocksUnlockedJammed) // both jammed
+			return DoorActionResult.UnlockedJam;
+		// success
+		if (
+			(this.currInsideLockState == DoorLockState.Unlocked || this.initInsideUnlockedJammed == true) &&
+			(this.currOutsideLockState == DoorLockState.Unlocked || this.initInsideUnlockedJammed == true))
+		{
+			if (this.initInsideUnlockedJammed)
+				this.currInsideLockState = DoorLockState.Locking;
+			this._animator.trySetTrigger(DoorAnimParamType.lockInside); // set trigger
+			this.currOutsideLockState = DoorLockState.Locking;
+
+			// runs in parellel since both on different animation layers
+			this._animator.trySetTrigger(DoorAnimParamType.lockInside); // set trigger
+		}
+		// cannot perform
+		return DoorActionResult.Failure;
+	}
+
+	DoorActionResult performCommonUnLock()
+	{
+
+	}
+	#endregion
+
 	public DoorActionResult TryUnlock(LockSide side)
 	{
 		Debug.Log(C.method(this, "lime"));
+
+		#region commonLock
+		if (this.usesCommonLock == true)
+		{
+			// since i shall jam one of the locks and hide it, when uses common lock is true
+			// one of animation(say open lock) extends in both side to make appear as common lock(visible from both sides)
+			if (this.TryUnlock(LockSide.Inside) == DoorActionResult.Success || this.TryUnlock(LockSide.Outside) == DoorActionResult.Success)
+				return DoorActionResult.Success;
+			return DoorActionResult.Failure;
+		}
+		#endregion
+
 		if (side == LockSide.Inside)
 		{
 			// cannot perform
-			if (this.currInsideLockState == DoorLockState.UnlockedJam)
+			/*
+			if (this.insideUnlockedJammed == true)
 				return DoorActionResult.UnlockedJam;
+			*/
 			// success
 			if (this.currInsideLockState == DoorLockState.Locked)
 			{
@@ -256,8 +316,10 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		else if (side == LockSide.Outside)
 		{
 			// cannot perform
-			if (this.currOutsideLockState == DoorLockState.UnlockedJam)
+			/*
+			if (this.outsideUnlockedJammed == true)
 				return DoorActionResult.UnlockedJam;
+			*/
 			// success
 			if (this.currOutsideLockState == DoorLockState.Locked)
 			{
@@ -308,6 +370,8 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 usesCommonLock: {usesCommonLock}
 canBeLocked: {canBeLocked}
 maxClosingRetries: {maxClosingRetries}
+initInsideUnlockedJammed: {initInsideUnlockedJammed}
+initOutsideUnlockedJammed: {initOutsideUnlockedJammed}
 
 isBlocked: {isBlocked}
 currDoorState: {currDoorState}

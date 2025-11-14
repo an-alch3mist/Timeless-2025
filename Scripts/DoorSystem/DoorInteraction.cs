@@ -209,7 +209,7 @@ public class DoorInteraction : MonoBehaviour
 		// Determine which side to lock based on player position
 		LockSide side = GetPlayerLockSide();
 
-		if (side == LockSide.Both)
+		if (side == LockSide.Any)
 		{
 			Debug.Log(C.method(this, "red", adMssg: "You must be inside or outside a trigger to lock the door!"));
 			return;
@@ -252,7 +252,7 @@ public class DoorInteraction : MonoBehaviour
 		// Determine which side to unlock based on player position
 		LockSide side = GetPlayerLockSide();
 
-		if (side == LockSide.Both)
+		if (side == LockSide.Any)
 		{
 			Debug.Log(C.method(this, "red", adMssg: "You must be inside or outside a trigger to unlock the door!"));
 			return;
@@ -295,7 +295,7 @@ public class DoorInteraction : MonoBehaviour
 		if (door.UsesCommonLock)
 		{
 			// Common lock doors require LockSide.Both
-			return (_isPlayerInside || _isPlayerOutside) ? LockSide.Both : LockSide.Both;
+			return (_isPlayerInside || _isPlayerOutside) ? LockSide.Any : LockSide.Any;
 		}
 
 		// Separate locks - determine based on trigger position
@@ -304,7 +304,7 @@ public class DoorInteraction : MonoBehaviour
 		else if (_isPlayerOutside && !_isPlayerInside)
 			return LockSide.Outside;
 		else
-			return LockSide.Both; // Invalid state - not in either trigger
+			return LockSide.Any; // Invalid state - not in either trigger
 	}
 
 	// ========================================================================

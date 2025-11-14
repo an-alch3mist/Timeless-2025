@@ -30,7 +30,7 @@ public enum LockSide
 {
 	Inside,
 	Outside,
-	Both // For common locks (keypad, gate handle)
+	Any // For common locks (keypad, gate handle), it doesnt matter where the user toggle's it.
 }
 
 public enum DoorActionResult
@@ -114,6 +114,9 @@ public interface IDoor
 	// ========================================================================
 	bool canBeLocked { get; set; }         // false = door can never be locked
 	bool usesCommonLock { get; set; }      // true = single lock (keypad/gate), false = separate inside/outside
+	bool initInsideUnlockedJammed { get; set; }
+	bool initOutsideUnlockedJammed { get; set; }
+
 	int maxClosingRetries { get; set; } // Default = 5 - how many times to retry closing before forcing
 
 
