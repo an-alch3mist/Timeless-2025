@@ -24,14 +24,13 @@
 
 		void Start()
 		{
-			if (_startHauntingOnAwake)
+			if (this._startHauntingOnAwake == true)
 				StartCoroutine(HauntingLoop());
 		}
 
 		// ========================================================================
 		// HAUNTING BEHAVIORS
 		// ========================================================================
-
 		IEnumerator HauntingLoop()
 		{
 			while (true)
@@ -172,7 +171,6 @@
 		{
 			StartCoroutine(BlockDoorTemporarily(duration));
 		}
-
 		IEnumerator BlockDoorTemporarily(float duration)
 		{
 			Debug.Log("[Ghost] Blocking door with supernatural force!".colorTag("red"));
@@ -191,7 +189,6 @@
 		// ========================================================================
 		// VISUAL EFFECTS
 		// ========================================================================
-
 		IEnumerator FlickerLight(float duration)
 		{
 			if (_flickeringLight == null) yield break;
@@ -212,19 +209,16 @@
 		// ========================================================================
 		// PUBLIC API - Call from triggers/events
 		// ========================================================================
-
 		public void OnPlayerEnterRoom()
 		{
 			// Slam door shut when player enters
 			StartCoroutine(SlamDoorShut());
 		}
-
 		public void OnPlayerNearDoor()
 		{
 			// Start swaying to spook player
 			StartCoroutine(MakeDoorSway());
 		}
-
 		public void OnPlayerLookingAtDoor()
 		{
 			// Open slowly when player is watching
