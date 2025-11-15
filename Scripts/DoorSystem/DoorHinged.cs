@@ -205,7 +205,7 @@ public class DoorHinged : MonoBehaviour
 		// Common lock path (keypad/gate with single lock mechanism)
 		if (usesCommonLock)
 		{
-			if (side != LockSide.Any) return DoorActionResult.WrongLockType; // Must use LockSide.Both
+			if (side != LockSide.Any) return DoorActionResult.WrongKeyToUnlock; // Must use LockSide.Both
 			if (InsideLockState == DoorLockState.Locked) return DoorActionResult.AlreadyInState;
 
 			IsAnimatingDoorPanel = true;
@@ -214,7 +214,7 @@ public class DoorHinged : MonoBehaviour
 		}
 
 		// Separate locks path (traditional door with inside/outside handles)
-		if (side == LockSide.Any) return DoorActionResult.WrongLockType; // Can't lock both separately
+		if (side == LockSide.Any) return DoorActionResult.WrongKeyToUnlock; // Can't lock both separately
 
 		if (side == LockSide.Inside)
 		{
@@ -240,7 +240,7 @@ public class DoorHinged : MonoBehaviour
 		// Common lock path
 		if (usesCommonLock)
 		{
-			if (side != LockSide.Any) return DoorActionResult.WrongLockType;
+			if (side != LockSide.Any) return DoorActionResult.WrongKeyToUnlock;
 			if (InsideLockState == DoorLockState.Unlocked) return DoorActionResult.AlreadyInState;
 
 			IsAnimatingDoorPanel = true;
@@ -249,7 +249,7 @@ public class DoorHinged : MonoBehaviour
 		}
 
 		// Separate locks path
-		if (side == LockSide.Any) return DoorActionResult.WrongLockType;
+		if (side == LockSide.Any) return DoorActionResult.WrongKeyToUnlock;
 
 		if (side == LockSide.Inside)
 		{

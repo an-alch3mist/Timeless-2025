@@ -42,7 +42,7 @@ public enum DoorActionResult
 	UnlockedJam,
 	AlreadyInState,         // Already in target state (e.g. already open)
 	AnimationInProgress,    // Another action is animating - prevents spam
-	WrongLockType,          // Tried LockSide.Both on separate locks or vice versa
+	WrongKeyToUnlock,          // Tried LockSide.Both on separate locks or vice versa
 	ObstructionDetected     // Object blocking door closure
 }
 
@@ -112,6 +112,7 @@ public interface IDoor
 	// ========================================================================
 	// CONFIGURATION CONSTANT THROUGH OUT GAME
 	// ========================================================================
+	string key { get; set; }
 	bool canBeLocked { get; set; }         // false = door can never be locked
 	bool usesCommonLock { get; set; }      // true = single lock (keypad/gate), false = separate inside/outside
 	bool initInsideUnlockedJammed { get; set; }
@@ -165,10 +166,18 @@ public interface IDoor
 	DoorActionResult TryOpen();
 
 	/// <summary>
-	/// Attempt to close the door. Retries up to MaxCloseRetries if obstructed.
+	/// unlock both the locks(if not unlockeJammed) if locked
+	/// Attempt to close the door. Retries up to MaxCloseRetries if obstructed(rigid body hit with door panel).
 	/// After max retries, forces door closed (slam shut).
 	/// </summary>
 	DoorActionResult TryClose();
+
+	/// <summary>
+	/// Attempt to close the door. Faster closed (slam shut). without locking, 
+	/// 
+	/// and different sound, different animation(a faster version of shut) compared to regular close
+	/// </summary>
+	DoorActionResult ForceClose();
 
 	/// <summary>
 	/// Unified lock method. Use LockSide.Both for common locks, Inside/Outside for separate locks.
@@ -180,20 +189,21 @@ public interface IDoor
 	/// Unified unlock method. Use LockSide.Both for common locks, Inside/Outside for separate locks.
 	/// Returns WrongLockType if side doesn't match door's lock configuration.
 	/// </summary>
-	DoorActionResult TryUnlock(LockSide side);
+	DoorActionResult TryUnlock(LockSide side, string key = "");
 
 	/// <summary>
 	/// Supernatural ability - blocks door from being opened/closed.
 	/// Lock state remains unchanged.
 	/// </summary>
-	DoorActionResult TryBlock();
+	DoorActionResult ForceBlock();
 
 	/// <summary>
 	/// Supernatural ability - removes block on door.
 	/// </summary>
-	DoorActionResult TryUnblock();
+	DoorActionResult ForceUnblock();
 
 	/// <summary>
+	/// --for future
 	/// Supernatural ability - makes door sway back and forth.
 	/// Forces both locks to unlock state and plays looping sway animation.
 	/// Block state remains unchanged (can sway while blocked).
@@ -201,6 +211,7 @@ public interface IDoor
 	DoorActionResult TryStartSwaying();
 
 	/// <summary>
+	/// --for future
 	/// Stops door swaying and transitions to targetState (Opened or Closed).
 	/// Typically called when player looks away or after timer.
 	/// </summary>

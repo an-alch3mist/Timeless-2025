@@ -11,6 +11,7 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 	[Header("just to log")]
 	[TextArea(minLines: 15, 20)] string _getStr;
 
+
 	[Header("CONFIGURATION CONSTANT THROUGH OUT GAME VAL")]
 	[SerializeField] bool _usesCommonLock = false;
 	[SerializeField] bool _canBeLocked = true;
@@ -21,6 +22,7 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 	[SerializeField] DoorState _initDoorState = DoorState.Opened;
 	[SerializeField] DoorLockState _initDoorLockInside = DoorLockState.Unlocked, _initDoorLockOutside = DoorLockState.Unlocked;
 
+	public string key { get; set; }
 	public bool usesCommonLock { get; set; }
 	public bool canBeLocked { get; set; }
 	public bool initInsideUnlockedJammed { get; set; }
@@ -182,8 +184,13 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		if (this.currDoorState == DoorState.Opened)
 		{
 			// try to unlock if locked -> door is closing is independedent of lock/unLock even if it s a not .success
-			TryUnlock(LockSide.Inside);
-			TryUnlock(LockSide.Outside);
+			if (this.usesCommonLock == true)
+				TryUnlock(LockSide.Any);
+			else
+			{
+				TryUnlock(LockSide.Inside);
+				TryUnlock(LockSide.Outside);
+			}
 			//
 			this.currDoorState = DoorState.Closing;
 			this._animator.trySetTrigger(DoorAnimParamType.doorClose); // set trigger
@@ -243,54 +250,18 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		}
 		return DoorActionResult.Failure;
 	}
-	#region ad
-	DoorActionResult performCommonLock()
-	{
-		// doesnt depend on LockSide side.
-		// since i shall jam one of the locks and hide it, when uses common lock is true
-		// one of animation(say open lock) extends in both side to make appear as common lock(visible from both sides)
-
-		// cannot perform
-		bool allLocksUnlockedJammed = true;
-		if (this.initInsideUnlockedJammed == false) allLocksUnlockedJammed = false;
-		if (this.initOutsideUnlockedJammed == false) allLocksUnlockedJammed = false;
-		if (allLocksUnlockedJammed) // both jammed
-			return DoorActionResult.UnlockedJam;
-		// success
-		if (
-			(this.currInsideLockState == DoorLockState.Unlocked || this.initInsideUnlockedJammed == true) &&
-			(this.currOutsideLockState == DoorLockState.Unlocked || this.initInsideUnlockedJammed == true))
-		{
-			if (this.initInsideUnlockedJammed)
-				this.currInsideLockState = DoorLockState.Locking;
-			this._animator.trySetTrigger(DoorAnimParamType.lockInside); // set trigger
-			this.currOutsideLockState = DoorLockState.Locking;
-
-			// runs in parellel since both on different animation layers
-			this._animator.trySetTrigger(DoorAnimParamType.lockInside); // set trigger
-		}
-		// cannot perform
-		return DoorActionResult.Failure;
-	}
-
-	DoorActionResult performCommonUnLock()
-	{
-
-	}
-	#endregion
-
-	public DoorActionResult TryUnlock(LockSide side)
+	public DoorActionResult TryUnlock(LockSide side, string key = "any")
 	{
 		Debug.Log(C.method(this, "lime"));
+
+		if (key != "any")
+			if (this.key != key)
+				return DoorActionResult.WrongKeyToUnlock;
 
 		#region commonLock
 		if (this.usesCommonLock == true)
 		{
-			// since i shall jam one of the locks and hide it, when uses common lock is true
-			// one of animation(say open lock) extends in both side to make appear as common lock(visible from both sides)
-			if (this.TryUnlock(LockSide.Inside) == DoorActionResult.Success || this.TryUnlock(LockSide.Outside) == DoorActionResult.Success)
-				return DoorActionResult.Success;
-			return DoorActionResult.Failure;
+			return this.performCommonUnLock();
 		}
 		#endregion
 
@@ -334,14 +305,59 @@ public class SimpleDoorHinged : MonoBehaviour, IDoor
 		}
 		return DoorActionResult.Failure;
 	}
+	#region ad
+	DoorActionResult performCommonLock()
+	{
+		// doesnt depend on LockSide side.
+		// since i shall jam one of the locks and hide it, when uses common lock is true
+		// one of animation(say open lock) extends in both side to make appear as common lock(visible from both sides)
 
-	public DoorActionResult TryBlock()
+		// cannot perform
+		// one of them should be jammed but not both
+		// for now uses common lock can be made with just outside lock not jammed and inside lock jammed
+		if (this.initOutsideUnlockedJammed == false && this.initInsideUnlockedJammed == true)
+		{
+			if (this.currOutsideLockState == DoorLockState.Unlocked)
+			{
+				this._animator.trySetTrigger(DoorAnimParamType.lockOutside); // set trigger
+				this.currOutsideLockState = DoorLockState.Locking;
+				return DoorActionResult.Success;
+			}
+			if (this.currOutsideLockState == DoorLockState.Locking || this.currOutsideLockState == DoorLockState.Unlocking)
+				return DoorActionResult.AnimationInProgress;
+			return DoorActionResult.Failure;
+		}
+		Debug.Log(C.method(null, "orange", adMssg: "outside jammed or both doors jammed for common lock to work"));
+		return DoorActionResult.Failure;
+	}
+
+	DoorActionResult performCommonUnLock()
+	{
+		if (this.initOutsideUnlockedJammed == false && this.initInsideUnlockedJammed == true)
+		{
+			if (this.currOutsideLockState == DoorLockState.Locked)
+			{
+				this._animator.trySetTrigger(DoorAnimParamType.unlockOutside); // set trigger
+				this.currOutsideLockState = DoorLockState.Unlocking;
+				return DoorActionResult.Success;
+			}
+			if (this.currOutsideLockState == DoorLockState.Locking || this.currOutsideLockState == DoorLockState.Unlocking)
+				return DoorActionResult.AnimationInProgress;
+			return DoorActionResult.Failure;
+		}
+		Debug.Log(C.method(null, "orange", adMssg: "outside jammed or both doors jammed for common lock to work"));
+		return DoorActionResult.Failure;
+	}
+	#endregion
+
+
+	public DoorActionResult ForceBlock()
 	{
 		Debug.Log(C.method(this, "lime"));
 		this.isBlocked = true;
 		return DoorActionResult.Blocked;
 	}
-	public DoorActionResult TryUnblock()
+	public DoorActionResult ForceUnblock()
 	{
 		Debug.Log(C.method(this, "lime"));
 		this.isBlocked = false;
@@ -399,6 +415,11 @@ OnLockStateChanged: {OnLockStateChanged};";
 	private void Update()
 	{
 		this._getStr = this.getStr;
+	}
+
+	public DoorActionResult ForceClose()
+	{
+		throw new NotImplementedException();
 	}
 	#endregion
 }

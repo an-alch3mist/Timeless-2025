@@ -29,7 +29,7 @@ public class SimpleDoorInteraction : MonoBehaviour
 		}
 		if (INPUT.K.InstantDown(this._keyCodeUnlockInside))
 		{
-			var result = this._simpleDoorHinged.TryUnlock(LockSide.Inside);
+			var result = this._simpleDoorHinged.TryUnlock(LockSide.Inside, "any");
 			Debug.Log(result.ToString().colorTag("grey"));
 		}
 
@@ -40,7 +40,7 @@ public class SimpleDoorInteraction : MonoBehaviour
 		}
 		if (INPUT.K.InstantDown(this._keyCodeUnlockOutside))
 		{
-			var result = this._simpleDoorHinged.TryUnlock(LockSide.Outside);
+			var result = this._simpleDoorHinged.TryUnlock(LockSide.Outside, "any");
 			Debug.Log(result.ToString().colorTag("grey"));
 		}
 	}

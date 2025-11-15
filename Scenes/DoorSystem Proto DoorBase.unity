@@ -1748,7 +1748,6 @@ GameObject:
   - component: {fileID: 2070244432}
   - component: {fileID: 2070244433}
   - component: {fileID: 2070244436}
-  - component: {fileID: 2070244435}
   - component: {fileID: 2070244434}
   m_Layer: 0
   m_Name: doorHingedSimple
@@ -1804,36 +1803,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 2070244431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63660d7514cdffd4bb9ef18a273cc655, type: 3}
+  m_Script: {fileID: 11500000, guid: 717d7c5f78894a6489dd4d6bf337dd68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _simpleDoorHinged: {fileID: 2070244435}
-  _keyCodeDoorOpen: 111
-  _keyCodeDoorClose: 99
-  _keyCodeLockInside: 108
-  _keyCodeUnlockInside: 117
-  _keyCodeLockOutside: 49
-  _keyCodeUnlockOutside: 48
---- !u!114 &2070244435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2070244431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92530ba7b26c53347828a9c34c114667, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  _debugInfo: 
+  _animator: {fileID: 2070244433}
+  _keyId: id
+  _requiresKeycard: 1
   _usesCommonLock: 0
   _canBeLocked: 1
   _maxClosingRetries: 5
+  _autoLockDelay: 0
   _initIsBlocked: 0
-  _initDoorState: 2
-  _initDoorLockInside: 0
-  _initDoorLockOutside: 2
-  _animator: {fileID: 2070244433}
+  _initDoorState: 0
+  _initInsideLockState: 2
+  _initOutsideLockState: 2
+  _swingAngle: 90
+  _hingeOnRight: 1
+  _playCreakSound: 0
 --- !u!114 &2070244436
 MonoBehaviour:
   m_ObjectHideFlags: 0

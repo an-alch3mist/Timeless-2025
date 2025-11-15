@@ -237,7 +237,7 @@ public class DoorInteraction : MonoBehaviour
 				Debug.Log(C.method(this, "red", adMssg: "Door cannot be locked (canBeLocked = false)"));
 				break;
 
-			case DoorActionResult.WrongLockType:
+			case DoorActionResult.WrongKeyToUnlock:
 				Debug.Log(C.method(this, "red", adMssg: "Wrong lock type! Check if door uses common lock"));
 				break;
 
@@ -276,7 +276,7 @@ public class DoorInteraction : MonoBehaviour
 				Debug.Log(C.method(this, "orange", adMssg: "Door is currently animating, please wait"));
 				break;
 
-			case DoorActionResult.WrongLockType:
+			case DoorActionResult.WrongKeyToUnlock:
 				Debug.Log(C.method(this, "red", adMssg: "Wrong lock type! Check if door uses common lock"));
 				break;
 
