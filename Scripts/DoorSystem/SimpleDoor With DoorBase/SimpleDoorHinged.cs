@@ -23,21 +23,20 @@
 		// OPTIONAL: Override methods for custom behavior
 		// ========================================================================
 
-		/*
 		// Example 1: Custom sound on open
 		public override DoorActionResult TryOpen()
 		{
 			var result = base.TryOpen();
-
 			if (result == DoorActionResult.Success && _playCreakSound)
 			{
-				// Play creaky door sound
-				AudioSource.PlayClipAtPoint(creakClip, transform.position);
+				Debug.Log(C.method(this, "cyan", adMssg: "override"));
+				/*
+					// Play creaky door sound
+					AudioSource.PlayClipAtPoint(creakClip, transform.position);
+				*/
 			}
-
 			return result;
 		}
-		*/
 
 		/*
 		// Example 2: Custom animation callback

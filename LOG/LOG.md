@@ -3854,3 +3854,24 @@ audio = Audio
 
 ```
 
+```sceneGameObject-hierarchy
+=== Component Abbreviations ===
+dmc = MeshFilter | MeshRenderer
+bc = BoxCollider
+anim = Animator
+================================
+
+./doorHingedSimple/(scale:1.0 | anim, SimpleDoorAnimEventForwarder, SimpleDoorHinged)
+├ trigger (scale:1.0 | no components)
+│ ├ door outside trigger (scale:1.0 | bc)
+│ └ door inside trigger  (scale:1.0 | bc)
+├ door (scale:1.0 | no components)
+│ ├ frame(visual + collider) (scale:(1.0,2.0,0.1) | dmc, bc)
+│ ├ handleOutside(visual + collider) (scale:(0.1,0.2,0.1) | dmc, bc)
+│ └ handleInside(visual + collider) (scale:(0.1,0.2,0.1) | dmc, bc)
+└ doorFrame (scale:1.0 | no components)
+  ├ visual frame left (scale:(0.1,2.0,0.1) | dmc, bc)
+  └ visual frame right (scale:(0.1,2.0,0.1) | dmc, bc)
+
+```
+

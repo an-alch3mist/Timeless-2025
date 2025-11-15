@@ -24,6 +24,7 @@
 
 		void Start()
 		{
+			Debug.Log(C.method(null, C.colorStr.red));
 			if (this._startHauntingOnAwake == true)
 				StartCoroutine(HauntingLoop());
 		}
@@ -36,7 +37,6 @@
 			while (true)
 			{
 				yield return new WaitForSeconds(_hauntingInterval);
-
 				// Random haunting action
 				int action = Random.Range(0, 4);
 
@@ -74,7 +74,6 @@
 
 			// Start swaying
 			var result = _targetDoor.TryStartSwaying();
-
 			if (result == DoorActionResult.Success)
 			{
 				// Flicker light while swaying
