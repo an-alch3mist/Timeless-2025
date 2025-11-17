@@ -8,7 +8,6 @@ namespace SPACE_GAME_1
 {
 	public class SimpleDoorAnimEventForwarder : MonoBehaviour
 	{
-
 		[SerializeField] DoorBase _doorBase;
 		private void Awake()
 		{
@@ -23,5 +22,4 @@ namespace SPACE_GAME_1
 		public void AEOnOutsideLockComplete() => this._doorBase.OnAnimationComplete(AnimationEventType.OutsideLockingComplete);
 		public void AEOnOutsideUnlockComplete() => this._doorBase.OnAnimationComplete(AnimationEventType.OutsideUnlockingComplete);
 	}
-
 }

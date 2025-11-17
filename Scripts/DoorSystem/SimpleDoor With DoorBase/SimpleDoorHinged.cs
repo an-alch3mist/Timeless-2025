@@ -10,12 +10,6 @@
 	/// </summary>
 	public class SimpleDoorHinged : DoorBase
 	{
-		[Header("Hinged Door Specific Settings")]
-		[SerializeField] float _swingAngle = 90f;
-		[SerializeField] bool _hingeOnRight = true;
-		[Tooltip("Play creak sound when door is old/damaged")]
-		[SerializeField] bool _playCreakSound = false;
-
 		// That's it! All door logic is inherited from DoorBase.
 		// The script works immediately with zero additional code needed.
 
@@ -27,7 +21,7 @@
 		public override DoorActionResult TryOpen()
 		{
 			var result = base.TryOpen();
-			if (result == DoorActionResult.Success && _playCreakSound)
+			if (result == DoorActionResult.Success)
 			{
 				Debug.Log(C.method(this, "cyan", adMssg: "override"));
 				/*
