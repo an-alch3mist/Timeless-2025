@@ -12,11 +12,15 @@ namespace SPACE_CHECK
 {
 	public class DEBUG_CHECK : MonoBehaviour
 	{
+		public string doorName;
+		public string playerInsideOrOutsideorNone = "none";
+
+
 		private void Start()
 		{
 			Debug.Log(C.method(this));
 			//this.checkAllAnimatorControllerParamExists();
-			this.checkGameObjHierarchy();
+			// this.checkGameObjHierarchy();
 		}
 
 		[SerializeField] Animator _animator;
