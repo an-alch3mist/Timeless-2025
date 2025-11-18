@@ -24,6 +24,7 @@ namespace SPACE_CHECK
 				interaction.isInside = this.isInside;
 				*/
 
+				// the root of collider -> where the collision interaction(player gameObject root) is attached to
 				other.Q().upCompo<DEBUG_CollisionInteraction>().currDoor = this.Q().upCompo<DEBUG_Door>();
 				other.Q().upCompo<DEBUG_CollisionInteraction>().isInside = this.isInside;
 			}
