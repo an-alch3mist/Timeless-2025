@@ -28,6 +28,7 @@ namespace SPACE_GAME
 		static void LoadAllSavedGameDataJsonToField()
 		{
 			GameStore.IA.LoadBindingOverridesFromJson(LOG.LoadGameData(GameDataType.inputActionAsset));
+			//GameStore.playerStats = LOG.LoadGameData<PlayerStats>(GameDataType.playerStats);
 			GameStore.playerStats = LOG.LoadGameData<PlayerStats>(GameDataType.playerStats);
 		}
 
