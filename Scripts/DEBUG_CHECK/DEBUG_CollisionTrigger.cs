@@ -25,8 +25,8 @@ namespace SPACE_CHECK
 				*/
 
 				// the root of collider -> where the collision interaction(player gameObject root) is attached to
-				other.Q().upCompo<DEBUG_CollisionInteraction>().currDoor = this.Q().upCompo<DEBUG_Door>();
-				other.Q().upCompo<DEBUG_CollisionInteraction>().isInside = this.isInside;
+				other.Q().upCompoGf<DEBUG_CollisionInteraction>().currDoor /* equivalent to .up<T>.gf<T>() */ = this.Q().upCompoGf<DEBUG_Door>();
+				other.Q().upCompoGf<DEBUG_CollisionInteraction>().isInside = this.isInside;
 			}
 		}
 		private void OnTriggerExit(Collider other)
@@ -43,7 +43,7 @@ namespace SPACE_CHECK
 				interaction.isInside = this.isInside;
 				*/
 
-				other.Q().upCompo<DEBUG_CollisionInteraction>().currDoor = null;
+				other.Q().upCompoGf<DEBUG_CollisionInteraction>().currDoor = null;
 			}
 		}
 		/*
