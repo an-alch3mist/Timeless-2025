@@ -8,17 +8,25 @@ namespace SPACE_CHECK
 {
 	public class DEBUG_CollisionInteraction : MonoBehaviour
 	{
-		public DEBUG_Door currDoor = null;
-		public bool isInside = false;
+		public List<DEBUG_Door> DOOR_INTERACTABLE = new List<DEBUG_Door>();
+		[SerializeField]List<GameObject> DOOR_OBJ = new List<GameObject>();
 
 		private void Update()
 		{
-			if(INPUT.K.InstantDown(KeyCode.E))
+			if(INPUT.M.InstantDown(0))
+			{
+				// if door interactable count is not = 0
+				// if ray cast hit it
+			}
+			/*
+			// find the appropriate door based on ray cast
+			if (INPUT.K.InstantDown(KeyCode.E))
 				if (this.currDoor != null)
 				{
 					// TODO: also the ray cast with distance toward the door(from first person camera)
 					this.currDoor.Interact(this.isInside);
 				}
+			*/
 		}
-	} 
+	}
 }
