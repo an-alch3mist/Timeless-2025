@@ -588,3 +588,82 @@ _list/hash/map/queue got no elem_
 
 _list/hash/map/queue got no elem_
 
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+```sceneGameObject-hierarchy
+=== Component Abbreviations ===
+dmc = MeshFilter | MeshRenderer
+bc = BoxCollider
+anim = Animator
+asrc = AudioSource
+================================
+
+./doorHingedSimple/(scale:1.0 | anim, asrc, SimpleDoorAnimEventForwarder, SimpleDoorHinged)
+├ trigger (scale:1.0 | no components)
+│ ├ door outside trigger (scale:1.0 | bc)
+│ └ door inside trigger  (scale:1.0 | bc)
+├ door (scale:1.0 | no components)
+│ ├ frame(visual + collider) (scale:(1.0,2.0,0.1) | dmc)
+│ │ ├ cube outside (scale:1.0 | dmc, bc)
+│ │ └ cube inside (scale:1.0 | dmc, bc)
+│ ├ handleOutside(visual + collider) (scale:(0.1,0.2,0.1) | dmc, bc)
+│ ├ handleInside(visual + collider) (scale:(0.1,0.2,0.1) | dmc, bc)
+│ └ doorId Text (TMP) (scale:1.0 | dmc, TextMeshPro)
+└ doorFrame (scale:1.0 | no components)
+  ├ visual frame left (scale:(0.1,2.0,0.1) | dmc, bc)
+  └ visual frame right (scale:(0.1,2.0,0.1) | dmc, bc)
+
+```
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+
+_list/hash/map/queue got no elem_
+

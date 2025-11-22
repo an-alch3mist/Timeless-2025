@@ -130,9 +130,12 @@
 		public string keyId { get => _keyId; set => _keyId = value; }
 		public bool requiresKeycard => _requiresKeycard;
 		public bool usesCommonLock => _usesCommonLock;
-		// public bool canBeLocked => _canBeLocked;
+		// public bool canBeLocked => _canBeLocked; // its the same when unlockedJammed both the locks
+
+		// TODO >>
 		public int maxClosingRetries => _maxClosingRetries;
 		public float autoLockDelay => _autoLockDelay;
+		// << TODO
 
 		// Runtime state
 		public bool isBlocked { get; protected set; }
@@ -168,6 +171,7 @@
 		protected virtual void InitializeDoor()
 		{
 			// Copy inspector values to runtime state
+			// Sync animator to initial state WITHOUT playing animations at the very start >>
 			isBlocked = _initIsBlocked;
 			currDoorState = _initDoorState;
 			currInsideLockState = _initInsideLockState;
@@ -175,14 +179,16 @@
 			initInsideUnlockedJammed = (_initInsideLockState == DoorLockState.UnlockedJam);
 			initOutsideUnlockedJammed = (_initOutsideLockState == DoorLockState.UnlockedJam);
 
-			// Sync animator to initial state WITHOUT playing animations at the very start
 			_animator.trySetBool(DoorAnimParamType.isDoorOpen,
 				_initDoorState == DoorState.Opened);
 			_animator.trySetBool(DoorAnimParamType.isInsideLocked,
 				_initInsideLockState == DoorLockState.Locked);
 			_animator.trySetBool(DoorAnimParamType.isOutsideLocked,
 				_initOutsideLockState == DoorLockState.Locked);
-			_animator.Update(0f); // Force immediate evaluation
+
+			// Force immediate evaluation
+			_animator.Update(0f); 
+			// << Sync animator to initial state WITHOUT playing animations at the very start
 		}
 		protected virtual void SetupAudio()
 		{
@@ -270,7 +276,7 @@
 			OnDoorStateChanged?.Invoke(currDoorState);
 			return DoorActionResult.Success;
 		}
-		public virtual DoorActionResult ForceClose()
+		public virtual DoorActionResult ForceClose(bool blockDoorAfterClosed = false) // done by super natural entity may block or maynot block the door after closing
 		{
 			Debug.Log(C.method(this, "orange"));
 
@@ -280,8 +286,10 @@
 			PlayAudio(_doorCloseSound); // TODO: Use slam sound for force close
 			OnDoorStateChanged ?
 				.Invoke(currDoorState); // if there are subscribers
+
+			this.isBlocked = blockDoorAfterClosed;
 			return DoorActionResult.Success;
-		}
+		} 
 		public virtual DoorActionResult TryLock(LockSide side)
 		{
 			Debug.Log(C.method(this, "cyan"));
@@ -481,20 +489,20 @@
 			{
 				case AnimationEventType.DoorOpeningComplete:
 					currDoorState = DoorState.Opened;
-					_animator.trySetBool(DoorAnimParamType.isDoorOpen, true);
+					_animator.trySetBool(DoorAnimParamType.isDoorOpen, true); // act as init behaviour, swaying util
 					OnDoorStateChanged?.Invoke(currDoorState);
 					break;
 
 				case AnimationEventType.DoorClosingComplete:
 					currDoorState = DoorState.Closed;
-					_animator.trySetBool(DoorAnimParamType.isDoorOpen, false);
+					_animator.trySetBool(DoorAnimParamType.isDoorOpen, false); // act as init behaviour, swaying util
 					OnDoorStateChanged?.Invoke(currDoorState);
 					break;
 
 				case AnimationEventType.InsideLockingComplete:
 					currInsideLockState = DoorLockState.Locked;
 					_animator.trySetBool(DoorAnimParamType.isInsideLocked, true);
-					OnLockStateChanged?.Invoke(currInsideLockState, LockSide.Inside);
+					OnLockStateChanged?.Invoke(currInsideLockState, LockSide.Inside); 
 					break;
 
 				case AnimationEventType.InsideUnlockingComplete:
