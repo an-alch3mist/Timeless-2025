@@ -1836,7 +1836,7 @@ GameObject:
   - component: {fileID: 574114756}
   - component: {fileID: 574114755}
   m_Layer: 11
-  m_Name: drawerSlideSimple (2)
+  m_Name: doorDrawerSlideSimple (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2737,7 +2737,7 @@ GameObject:
   - component: {fileID: 901465443}
   - component: {fileID: 901465442}
   m_Layer: 11
-  m_Name: drawerSlideSimple (3)
+  m_Name: doorDrawerSlideSimple (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5818,7 +5818,7 @@ GameObject:
   - component: {fileID: 1390317584}
   - component: {fileID: 1390317585}
   m_Layer: 11
-  m_Name: drawerSlideSimple (0)
+  m_Name: doorDrawerSlideSimple (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6530,7 +6530,7 @@ GameObject:
   - component: {fileID: 1464371600}
   - component: {fileID: 1464371599}
   m_Layer: 11
-  m_Name: drawerSlideSimple (1)
+  m_Name: doorDrawerSlideSimple (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7032,7 +7032,7 @@ GameObject:
   - component: {fileID: 1707312353}
   - component: {fileID: 1707312352}
   m_Layer: 11
-  m_Name: drawerSlideSimple (4)
+  m_Name: doorDrawerSlideSimple (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
