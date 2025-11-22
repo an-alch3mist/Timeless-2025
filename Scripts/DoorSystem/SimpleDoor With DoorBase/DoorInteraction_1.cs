@@ -42,6 +42,7 @@ namespace SPACE_GAME_1
 				if (INPUT.K.InstantDown(KeyCode.L))
 				{
 					// Debug.Log("hit door mask".colorTag("cyan"));
+
 					if (hit.transform.name.anyMatch(@"inside"))
 					{
 						Debug.Log("inside".colorTag("cyan"));

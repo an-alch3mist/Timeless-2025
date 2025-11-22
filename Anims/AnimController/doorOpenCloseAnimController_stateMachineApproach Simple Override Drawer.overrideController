@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: doorOpenCloseAnimController_stateMachineApproach Simple Override Drawer
+  m_Controller: {fileID: 9100000, guid: 706d3798db768a0449494e5db273394b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 91d742838c9b6b64e9fec28c16337fac, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f63bd06e119fa3d4f91aecde8e1f0f2b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8a3002a7503da834fafedfb4152a6688, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f46525b0f36f47b45b1452d151025a7b, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 222a7b0c92dfec24aa3b3b7d1116a106, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4459bde352fe77340835c633f2a0818f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 4170d3e56ed866a4fb7cb8c46f66aee8, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: fe25e9de6d0f4be4ebf383c3bc4e7e46, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 35af210f5e9b1e4448ce326ae06ac0ee, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: dcfe8628de95b844aa94acb6b2b415c8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 9957f36088cef8245ae5e52e5d597b07, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e767fd7dae950434a985a59247fe085e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 0dce0c60c93630a4182cc3f5a5593b3e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 1617422ec76903143a132c4ba371c500, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: c1fd6c2af4ccf0942a250c13147665a1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: af98f05f3d808754c904db4f3fe930a1, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1f871d6c053ee474084b89162921b012, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e34acc3d4b6a446428626d87a9fc600a, type: 2}

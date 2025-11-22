@@ -21,9 +21,9 @@ namespace SPACE_CHECK
 		{
 			Debug.Log(C.method(this));
 
-			// this.checkAllAnimatorControllerParamExists();
+			this.checkAllAnimatorControllerParamExists();
 			// this.checkGameObjHierarchy();
-			this.checkHierarchyQuery();
+			// this.checkHierarchyQuery();
 		}
 
 		[SerializeField] Animator _animator;
