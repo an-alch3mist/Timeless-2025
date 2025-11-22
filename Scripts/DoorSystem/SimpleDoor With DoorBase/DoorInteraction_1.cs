@@ -26,7 +26,7 @@ namespace SPACE_GAME_1
 			if(Physics.Raycast(ray, out RaycastHit hit, this._rayDist, this._doorSideMask) == true)
 			{
 				var doorBase = hit.transform.Q().upCompoGf<DoorBase>();
-				Debug.Log(doorBase);
+				// Debug.Log(doorBase);
 
 				if (INPUT.K.InstantDown(KeyCode.E))
 				{
